@@ -276,6 +276,31 @@
             margin-top: 2px;
         }
 
+        .fn-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .fn-input-group label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 4px;
+        }
+
+        .fn-input-group input {
+            padding: 6px 10px;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.9);
+            color: #1e293b;
+        }
+
         /* Savings Goal Progress Bar */
         .savings-card {
             background: #ffffff;
@@ -431,6 +456,11 @@
             background: #fffbeb;
         }
 
+        .history-item.saturday-item {
+            border-left-color: #3b82f6;
+            background: #eff6ff;
+        }
+
         .history-item.expense-item {
             border-left-color: var(--success);
         }
@@ -490,26 +520,6 @@
             <p id="current-date-display"></p>
         </header>
 
-        <!-- ปุ่ม Google Sheets & พิมพ์ PDF -->
-        <div class="backup-box">
-            <a href="https://sheets.google.com" target="_blank" class="backup-btn drive" data-i18n="btn_drive">☁️ เปิด Google Sheets</a>
-            <button class="backup-btn pdf-btn" onclick="window.print()" data-i18n="btn_pdf">📄 พิมพ์ / เซฟ PDF</button>
-        </div>
-
-        <!-- กล่องสรุปยอดรวมภาพรวม -->
-        <div class="summary-box">
-            <div class="summary-card">
-                <h3 data-i18n="sum_net_title">รายรับสุทธิ (รวมทั้งหมด)</h3>
-                <p id="total-net-sum">$0.00 AUD</p>
-                <span id="total-gross-sum">ก่อนหัก Tax: $0.00</span>
-            </div>
-            <div class="summary-card expense">
-                <h3 data-i18n="sum_expense_title">รายจ่ายรวม (AUD)</h3>
-                <p id="total-expense-sum">$0.00 AUD</p>
-                <span>&nbsp;</span>
-            </div>
-        </div>
-
         <!-- กล่องสรุปรายรับเรียลไทม์ + Superannuation -->
         <div class="realtime-summary">
             <h3 data-i18n="rt_title">📊 สรุปรายละเอียดรายรับรวม (เรียลไทม์)</h3>
@@ -524,7 +534,7 @@
             </div>
         </div>
 
-        <!-- เทมเพลตรอบจ่าย Fortnight -->
+        <!-- เทมเพลตรอบจ่าย Fortnight + ช่องกรอกค่าไฟ/แก๊ส Manual -->
         <div class="fortnight-card">
             <div class="fortnight-header">
                 <button class="fn-nav-btn" onclick="changeFortnight(-1)" data-i18n="fn_prev">◀ รอบก่อน</button>
@@ -544,6 +554,18 @@
                     <span data-i18n="fn_takehome_sub">ยอดรับเข้ากระเป๋า</span>
                 </div>
             </div>
+
+            <!-- ช่องพิมพ์ระบุค่าไฟ/ค่าแก๊ส Manual ประจำรอบ -->
+            <div class="fn-inputs">
+                <div class="fn-input-group">
+                    <label data-i18n="label_elec">⚡ ค่าไฟรอบนี้ ($)</label>
+                    <input type="number" step="any" id="fn-elec-input" placeholder="0.00" oninput="saveAndRenderUtilities()">
+                </div>
+                <div class="fn-input-group">
+                    <label data-i18n="label_gas">🔥 ค่าแก๊สรอบนี้ ($)</label>
+                    <input type="number" step="any" id="fn-gas-input" placeholder="0.00" oninput="saveAndRenderUtilities()">
+                </div>
+            </div>
         </div>
 
         <!-- กล่องสัดส่วนเงินเก็บคงเหลือ (Savings Ratio) -->
@@ -559,7 +581,7 @@
 
         <!-- ฟอร์มบันทึกชั่วโมงทำงาน + Memo -->
         <div class="card">
-            <h2 data-i18n="work_form_title">⏱️ บันทึกเวลาเข้า-ออกงาน (เรท $29.44 / อาทิตย์ ×2 / หัก Tax 21%)</h2>
+            <h2 data-i18n="work_form_title">⏱️ บันทึกเวลาเข้า-ออกงาน (เรท $29.44 / เสาร์ 1.5× / อาทิตย์ 2× / เกิน 76 ชม. คิด OT 1.5×)</h2>
             <form id="work-form">
                 <div class="form-group">
                     <label data-i18n="label_date">วันที่</label>
@@ -584,7 +606,7 @@
             <div class="history-list" id="work-history"></div>
         </div>
 
-        <!-- ฟอร์มบันทึกรายจ่าย -->
+        <!-- ฟอร์มบันทึกรายจ่ายประจำวัน + Memo (ปรับดีไซน์ให้เหมือนฟอร์มรายรับ) -->
         <div class="card">
             <h2 data-i18n="expense_form_title">💸 บันทึกรายจ่ายประจำวัน (AUD)</h2>
             <form id="expense-form">
@@ -592,29 +614,37 @@
                     <label data-i18n="label_date">วันที่</label>
                     <input type="date" id="expense-date" required>
                 </div>
-                <div class="form-group">
-                    <label data-i18n="label_cat">หมวดหมู่รายจ่าย</label>
-                    <select id="expense-category" onchange="toggleOtherInput()" required>
-                        <option value="🍽️ ค่าอาหาร" data-i18n="cat_food">🍽️ ค่าอาหาร</option>
-                        <option value="⛽ ค่าน้ำมัน" data-i18n="cat_fuel">⛽ ค่าน้ำมัน</option>
-                        <option value="🛒 ซื้อของต่างๆ" data-i18n="cat_groceries">🛒 ซื้อของต่างๆ</option>
-                        <option value="📌 อื่นๆ" data-i18n="cat_other">📌 อื่นๆ (ระบุ)</option>
-                    </select>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="label_cat">หมวดหมู่รายจ่าย</label>
+                        <select id="expense-category" onchange="toggleOtherInput()" required>
+                            <option value="🍽️ ค่าอาหาร" data-i18n="cat_food">🍽️ ค่าอาหาร</option>
+                            <option value="⛽ ค่าน้ำมัน" data-i18n="cat_fuel">⛽ ค่าน้ำมัน</option>
+                            <option value="🛒 ซื้อของต่างๆ" data-i18n="cat_groceries">🛒 ซื้อของต่างๆ</option>
+                            <option value="⚡ ค่าไฟ" data-i18n="cat_electricity">⚡ ค่าไฟ (Electricity)</option>
+                            <option value="🔥 ค่าแก๊ส" data-i18n="cat_gas">🔥 ค่าแก๊ส (Gas)</option>
+                            <option value="📌 อื่นๆ" data-i18n="cat_other">📌 อื่นๆ (ระบุ)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="label_amount">จำนวนเงิน (AUD)</label>
+                        <input type="number" step="any" id="expense-amount" placeholder="0.00" required>
+                    </div>
                 </div>
                 <div class="form-group" id="other-desc-group" style="display: none;">
                     <label data-i18n="label_other_desc">ระบุรายละเอียดค่าใช้จ่ายอื่นๆ</label>
                     <input type="text" id="expense-other-desc" placeholder="...">
                 </div>
                 <div class="form-group">
-                    <label data-i18n="label_amount">จำนวนเงิน (AUD)</label>
-                    <input type="number" step="any" id="expense-amount" placeholder="0.00" required>
+                    <label data-i18n="label_exp_memo">หมายเหตุ / Memo (เช่น ซื้อของ Coles, เติมน้ำมัน Shell)</label>
+                    <input type="text" id="expense-memo" placeholder="...">
                 </div>
                 <button type="submit" data-i18n="btn_save_expense">บันทึกรายจ่ายและซิงค์เข้า Drive</button>
             </form>
             <div class="history-list" id="expense-history"></div>
         </div>
 
-        <!-- Section กราฟรายรับ-รายจ่าย รายเดือน (3 ปี) [ย้ายลงมาไว้บรรทัดล่างสุด] -->
+        <!-- Section กราฟรายรับ-รายจ่าย รายเดือน (3 ปี) -->
         <div class="chart-card">
             <div class="chart-header">
                 <h2 data-i18n="chart_bar_title">📈 เปรียบเทียบ รายรับ - รายจ่าย รายเดือน</h2>
@@ -629,7 +659,7 @@
             </div>
         </div>
 
-        <!-- Section กราฟวงกลม สัดส่วนรายจ่าย [ย้ายลงมาไว้บรรทัดล่างสุด] -->
+        <!-- Section กราฟวงกลม สัดส่วนรายจ่าย -->
         <div class="chart-card">
             <div class="chart-header">
                 <h2 data-i18n="chart_pie_title">🍩 สัดส่วนรายจ่ายตามหมวดหมู่</h2>
@@ -640,6 +670,26 @@
             </div>
             <div class="chart-container" style="height: 220px;">
                 <canvas id="expensePieChart"></canvas>
+            </div>
+        </div>
+
+        <!-- ปุ่ม Google Sheets & พิมพ์ PDF -->
+        <div class="backup-box">
+            <a href="https://sheets.google.com" target="_blank" class="backup-btn drive" data-i18n="btn_drive">☁️ เปิด Google Sheets</a>
+            <button class="backup-btn pdf-btn" onclick="window.print()" data-i18n="btn_pdf">📄 พิมพ์ / เซฟ PDF</button>
+        </div>
+
+        <!-- กล่องสรุปยอดรวมภาพรวม -->
+        <div class="summary-box">
+            <div class="summary-card">
+                <h3 data-i18n="sum_net_title">รายรับสุทธิ (รวมทั้งหมด)</h3>
+                <p id="total-net-sum">$0.00 AUD</p>
+                <span id="total-gross-sum">ก่อนหัก Tax: $0.00</span>
+            </div>
+            <div class="summary-card expense">
+                <h3 data-i18n="sum_expense_title">รายจ่ายรวม (AUD)</h3>
+                <p id="total-expense-sum">$0.00 AUD</p>
+                <span>&nbsp;</span>
             </div>
         </div>
 
@@ -679,36 +729,42 @@
                 fn_title: "📅 รอบ Fortnight",
                 fn_next: "รอบถัดไป ▶",
                 fn_net_title: "ยอดรวมสุทธิรอบนี้",
-                fn_deduct_visa: "หักค่าบ้าน (-$380) + วีซ่า (-$250)",
-                fn_deduct_novisa: "หักค่าบ้าน (-$380) [หมดค่าวีซ่าแล้ว]",
+                fn_deduct_visa: "หักค่าบ้าน (-$380) + วีซ่า (-$250) + ไฟ/แก๊ส",
+                fn_deduct_novisa: "หักค่าบ้าน (-$380) + ไฟ/แก๊ส [หมดค่าวีซ่าแล้ว]",
                 fn_takehome_title: "เงินรับจริง (หลังหักค่าใช้จ่าย)",
                 fn_takehome_sub: "ยอดรับเข้ากระเป๋า",
+                label_elec: "⚡ ค่าไฟรอบนี้ ($)",
+                label_gas: "🔥 ค่าแก๊สรอบนี้ ($)",
                 savings_title: "💡 สัดส่วนเงินคงเหลือเก็บสะสม",
                 savings_sub: "เงินเหลือเก็บ",
                 chart_bar_title: "📈 เปรียบเทียบ รายรับ - รายจ่าย รายเดือน",
                 chart_pie_title: "🍩 สัดส่วนรายจ่ายตามหมวดหมู่",
                 scope_month: "เดือนนี้",
                 scope_all: "ทั้งหมด",
-                work_form_title: "⏱️ บันทึกเวลาเข้า-ออกงาน (เรท $29.44 / อาทิตย์ ×2 / หัก Tax 21%)",
+                work_form_title: "⏱️ บันทึกเวลาเข้า-ออกงาน (เรท $29.44 / เสาร์ 1.5× / อาทิตย์ 2× / เกิน 76 ชม. คิด OT 1.5×)",
                 label_date: "วันที่",
                 label_start: "เวลาเข้างาน",
                 label_end: "เวลาเลิกงาน",
                 label_memo: "หมายเหตุ / Memo (เช่น ส่งไก่กะเช้า, งานฟาร์ม)",
+                label_exp_memo: "หมายเหตุ / Memo (เช่น ซื้อของ Coles, เติมน้ำมัน Shell)",
                 btn_save_work: "บันทึกและซิงค์เข้า Google Drive",
                 expense_form_title: "💸 บันทึกรายจ่ายประจำวัน (AUD)",
                 label_cat: "หมวดหมู่รายจ่าย",
                 cat_food: "🍽️ ค่าอาหาร",
                 cat_fuel: "⛽ ค่าน้ำมัน",
                 cat_groceries: "🛒 ซื้อของต่างๆ",
+                cat_electricity: "⚡ ค่าไฟ (Electricity)",
+                cat_gas: "🔥 ค่าแก๊ส (Gas)",
                 cat_other: "📌 อื่นๆ (ระบุ)",
                 label_other_desc: "ระบุรายละเอียดค่าใช้จ่ายอื่นๆ",
                 label_amount: "จำนวนเงิน (AUD)",
                 btn_save_expense: "บันทึกรายจ่ายและซิงค์เข้า Drive",
                 sun_badge: "(☀️ วันอาทิตย์เรท ×2)",
+                sat_badge: "(🌤️ วันเสาร์เรท ×1.5)",
                 work_hist_hrs: "ทำจริง: {real} ชม. | คิดให้: {paid} ชม.",
                 work_hist_net: "ก่อน Tax: ${gross} | สุทธิหลังหัก Tax (21%): +${net} AUD",
                 delete: "ลบ",
-                exp_hist_pay: "จ่าย: -${amt} AUD",
+                exp_hist_pay: "จ่ายสุทธิ: -${amt} AUD",
                 chart_net_income: "รายรับสุทธิ ($)",
                 chart_expense: "รายจ่าย ($)"
             },
@@ -729,36 +785,42 @@
                 fn_title: "📅 Fortnight Period",
                 fn_next: "Next ▶",
                 fn_net_title: "Fortnight Net Total",
-                fn_deduct_visa: "Deduct Rent (-$380) + Visa (-$250)",
-                fn_deduct_novisa: "Deduct Rent (-$380) [Visa Completed]",
+                fn_deduct_visa: "Deduct Rent (-$380) + Visa (-$250) + Utilities",
+                fn_deduct_novisa: "Deduct Rent (-$380) + Utilities [Visa Completed]",
                 fn_takehome_title: "Actual Take-Home Pay",
                 fn_takehome_sub: "Pocketed Earnings",
+                label_elec: "⚡ Elec Bill ($)",
+                label_gas: "🔥 Gas Bill ($)",
                 savings_title: "💡 Savings Ratio Status",
                 savings_sub: "Savings Ratio",
                 chart_bar_title: "📈 Monthly Income vs Expense",
                 chart_pie_title: "🍩 Expense Categories Breakdown",
                 scope_month: "This Month",
                 scope_all: "All Time",
-                work_form_title: "⏱️ Shift Entry (Rate $29.44 / Sun ×2 / Tax 21%)",
+                work_form_title: "⏱️ Shift Entry (Rate $29.44 / Sat ×1.5 / Sun ×2 / Over 76h OT 1.5×)",
                 label_date: "Date",
                 label_start: "Start Time",
                 label_end: "End Time",
                 label_memo: "Notes / Memo (e.g. Morning Shift, Farm Work)",
+                label_exp_memo: "Notes / Memo (e.g. Coles Shopping, Shell Fuel)",
                 btn_save_work: "Save & Sync to Google Drive",
                 expense_form_title: "💸 Daily Expenses (AUD)",
                 label_cat: "Category",
                 cat_food: "🍽️ Food & Meals",
                 cat_fuel: "⛽ Fuel / Gas",
                 cat_groceries: "🛒 Shopping / Groceries",
+                cat_electricity: "⚡ Electricity Bill",
+                cat_gas: "🔥 Gas Bill",
                 cat_other: "📌 Others (Specify)",
                 label_other_desc: "Specify Other Expense Details",
                 label_amount: "Amount (AUD)",
                 btn_save_expense: "Save Expense & Sync",
                 sun_badge: "(☀️ Sunday Rate ×2)",
+                sat_badge: "(🌤️ Saturday Rate ×1.5)",
                 work_hist_hrs: "Actual: {real} hrs | Paid: {paid} hrs",
                 work_hist_net: "Gross: ${gross} | Net after 21% Tax: +${net} AUD",
                 delete: "Delete",
-                exp_hist_pay: "Spent: -${amt} AUD",
+                exp_hist_pay: "Net Expense: -${amt} AUD",
                 chart_net_income: "Net Income ($)",
                 chart_expense: "Expenses ($)"
             }
@@ -790,6 +852,7 @@
 
         let workData = JSON.parse(localStorage.getItem('workData')) || [];
         let expenseData = JSON.parse(localStorage.getItem('expenseData')) || [];
+        let fnUtilitiesData = JSON.parse(localStorage.getItem('fnUtilitiesData')) || {};
 
         let fortnightOffset = 0;
         let barChartInstance = null;
@@ -854,7 +917,86 @@
             renderData();
         }
 
+        window.saveAndRenderUtilities = function() {
+            const currentFn = getFortnightInfo(todayObj, fortnightOffset);
+            const fnKey = currentFn.fnStart.toISOString().split('T')[0];
+
+            const elecVal = Number(document.getElementById('fn-elec-input').value) || 0;
+            const gasVal = Number(document.getElementById('fn-gas-input').value) || 0;
+
+            fnUtilitiesData[fnKey] = { elec: elecVal, gas: gasVal };
+            localStorage.setItem('fnUtilitiesData', JSON.stringify(fnUtilitiesData));
+
+            renderData();
+        }
+
+        function recalculatePayRates() {
+            let sortedWork = [...workData].sort((a, b) => new Date(a.date) - new Date(b.date));
+            let fortnightGroups = {};
+
+            sortedWork.forEach(item => {
+                const itemDate = new Date(item.date + 'T00:00:00');
+                const fnInfo = getFortnightInfo(itemDate, 0);
+                const fnKey = fnInfo.fnStart.toISOString().split('T')[0];
+
+                if (!fortnightGroups[fnKey]) {
+                    fortnightGroups[fnKey] = [];
+                }
+                fortnightGroups[fnKey].push(item);
+            });
+
+            Object.keys(fortnightGroups).forEach(fnKey => {
+                let accumulatedWeekdayPaidHrs = 0;
+
+                fortnightGroups[fnKey].forEach(item => {
+                    const d = new Date(item.date + 'T00:00:00');
+                    const dayOfWeek = d.getDay();
+
+                    let realHrs = Number(item.realHours);
+                    let paidHrs = realHrs;
+                    let otHrs = 0;
+                    let gross = 0;
+
+                    if (dayOfWeek === 0) {
+                        item.isSunday = true;
+                        item.isSaturday = false;
+                        gross = paidHrs * SUNDAY_RATE;
+                    } else if (dayOfWeek === 6) {
+                        item.isSunday = false;
+                        item.isSaturday = true;
+                        otHrs = paidHrs;
+                        gross = paidHrs * OT_RATE;
+                    } else {
+                        item.isSunday = false;
+                        item.isSaturday = false;
+
+                        let prevAccumulated = accumulatedWeekdayPaidHrs;
+                        accumulatedWeekdayPaidHrs += paidHrs;
+
+                        if (accumulatedWeekdayPaidHrs <= 76) {
+                            gross = paidHrs * BASE_RATE;
+                        } else if (prevAccumulated >= 76) {
+                            otHrs = paidHrs;
+                            gross = paidHrs * OT_RATE;
+                        } else {
+                            let normalHrs = 76 - prevAccumulated;
+                            otHrs = paidHrs - normalHrs;
+                            gross = (normalHrs * BASE_RATE) + (otHrs * OT_RATE);
+                        }
+                    }
+
+                    item.paidHours = paidHrs.toFixed(1);
+                    item.otHours = otHrs.toFixed(1);
+                    item.grossPay = gross;
+                    item.netPay = gross * (1 - TAX_RATE);
+                    item.superPay = gross * SUPER_RATE;
+                });
+            });
+        }
+
         function renderData() {
+            recalculatePayRates();
+
             const dateOpts = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
             document.getElementById('current-date-display').innerText = todayObj.toLocaleDateString(currentLang === 'th' ? 'th-TH' : 'en-US', dateOpts);
 
@@ -866,7 +1008,12 @@
             let totalPaidHrs = 0;
             
             const currentFn = getFortnightInfo(todayObj, fortnightOffset);
+            const fnKey = currentFn.fnStart.toISOString().split('T')[0];
             let fnNetTotal = 0;
+
+            const currentFnUtil = fnUtilitiesData[fnKey] || { elec: 0, gas: 0 };
+            document.getElementById('fn-elec-input').value = currentFnUtil.elec || '';
+            document.getElementById('fn-gas-input').value = currentFnUtil.gas || '';
 
             const thMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
             const enMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -891,18 +1038,27 @@
                     fnNetTotal += Number(item.netPay);
                 }
 
-                const isSundayClass = item.isSunday ? 'sunday-item' : '';
-                const sundayBadge = item.isSunday ? ` <span style="color:#d97706; font-weight:600;">${i18n[currentLang].sun_badge}</span>` : '';
+                let dayBadge = '';
+                let dayClass = '';
+
+                if (item.isSunday) {
+                    dayClass = 'sunday-item';
+                    dayBadge = ` <span style="color:#d97706; font-weight:600;">${i18n[currentLang].sun_badge}</span>`;
+                } else if (item.isSaturday) {
+                    dayClass = 'saturday-item';
+                    dayBadge = ` <span style="color:#2563eb; font-weight:600;">${i18n[currentLang].sat_badge}</span>`;
+                }
+
                 const memoText = item.memo ? `<span class="memo-tag">📝 ${item.memo}</span>` : '';
 
                 const hrsText = i18n[currentLang].work_hist_hrs.replace('{real}', item.realHours).replace('{paid}', item.paidHours);
                 const netText = i18n[currentLang].work_hist_net.replace('{gross}', Number(item.grossPay).toFixed(2)).replace('{net}', Number(item.netPay).toFixed(2));
 
                 workHistory.innerHTML += `
-                    <div class="history-item ${isSundayClass}">
+                    <div class="history-item ${dayClass}">
                         <div>
-                            <strong>${item.date} (${item.start} - ${item.end})${sundayBadge}</strong>
-                            <span>${hrsText} ${item.otHours > 0 ? `(OT: ${item.otHours} hrs)` : ''}</span>
+                            <strong>${item.date} (${item.start} - ${item.end})${dayBadge}</strong>
+                            <span>${hrsText} ${Number(item.otHours) > 0 ? `<b style="color:#2563eb;">(OT: ${item.otHours} hrs)</b>` : ''}</span>
                             ${memoText}
                             <span style="color: var(--primary); font-weight: 500; margin-top: 2px;">
                                 ${netText}
@@ -922,7 +1078,9 @@
             rtTax.innerText = `$${(totalGross * TAX_RATE).toFixed(2)} AUD`;
             rtSuper.innerText = `$${totalSuper.toFixed(2)} AUD`;
 
-            let totalDeduction = RENT_PER_FORTNIGHT;
+            let fnUtilities = Number(currentFnUtil.elec) + Number(currentFnUtil.gas);
+
+            let totalDeduction = RENT_PER_FORTNIGHT + fnUtilities;
             if (isVisaActive) {
                 totalDeduction += VISA_PER_FORTNIGHT;
                 fnDeductNote.innerText = i18n[currentLang].fn_deduct_visa;
@@ -940,11 +1098,14 @@
             expenseData.forEach((item, index) => {
                 totalExpense += Number(item.amount);
                 const payText = i18n[currentLang].exp_hist_pay.replace('{amt}', Number(item.amount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                const expMemoText = item.memo ? `<span class="memo-tag">📝 ${item.memo}</span>` : '';
+
                 expenseHistory.innerHTML += `
                     <div class="history-item expense-item">
                         <div>
                             <strong>${item.date} - ${item.category}</strong>
-                            <span style="color: #059669; font-weight: 500;">${payText}</span>
+                            ${expMemoText}
+                            <span style="color: #059669; font-weight: 500; margin-top: 2px;">${payText}</span>
                         </div>
                         <button class="delete-btn" onclick="deleteExpense(${index})">${i18n[currentLang].delete}</button>
                     </div>
@@ -1022,6 +1183,8 @@
             categoryTotals[i18n[currentLang].cat_food] = 0;
             categoryTotals[i18n[currentLang].cat_fuel] = 0;
             categoryTotals[i18n[currentLang].cat_groceries] = 0;
+            categoryTotals[i18n[currentLang].cat_electricity] = 0;
+            categoryTotals[i18n[currentLang].cat_gas] = 0;
             categoryTotals[i18n[currentLang].cat_other] = 0;
 
             const currentMonthKey = todayObj.getFullYear() + '-' + String(todayObj.getMonth() + 1).padStart(2, '0');
@@ -1033,6 +1196,8 @@
                     if (item.category.includes('อาหาร') || item.category.includes('Food')) catKey = i18n[currentLang].cat_food;
                     else if (item.category.includes('น้ำมัน') || item.category.includes('Fuel')) catKey = i18n[currentLang].cat_fuel;
                     else if (item.category.includes('ซื้อของ') || item.category.includes('Shopping')) catKey = i18n[currentLang].cat_groceries;
+                    else if (item.category.includes('ค่าไฟ') || item.category.includes('Electricity')) catKey = i18n[currentLang].cat_electricity;
+                    else if (item.category.includes('ค่าแก๊ส') || item.category.includes('Gas')) catKey = i18n[currentLang].cat_gas;
 
                     categoryTotals[catKey] += Number(item.amount);
                 }
@@ -1046,7 +1211,7 @@
                     labels: Object.keys(categoryTotals),
                     datasets: [{
                         data: Object.values(categoryTotals),
-                        backgroundColor: ['#f59e0b', '#ef4444', '#06b6d4', '#8b5cf6']
+                        backgroundColor: ['#f59e0b', '#ef4444', '#06b6d4', '#eab308', '#f97316', '#8b5cf6']
                     }]
                 },
                 options: {
@@ -1059,16 +1224,12 @@
             });
         }
 
-        /* ปรับแต่งฟังก์ชันส่งข้อมูลให้ปลอดภัยบน Android / S26 Ultra */
         workForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const dateStr = document.getElementById('work-date').value;
             const start = document.getElementById('work-start').value;
             const end = document.getElementById('work-end').value;
             const memo = document.getElementById('work-memo').value;
-
-            const dateObj = new Date(dateStr + 'T00:00:00');
-            const isSunday = dateObj.getDay() === 0;
 
             const [startHour, startMin] = start.split(':').map(Number);
             const [endHour, endMin] = end.split(':').map(Number);
@@ -1085,54 +1246,37 @@
             }
             realHours = Math.max(0, realHours);
 
-            let paidHours = 0;
-            let otHours = 0;
-            let grossPay = 0;
-
-            if (isSunday) {
-                paidHours = realHours;
-                grossPay = realHours * SUNDAY_RATE;
-            } else {
-                if (realHours >= 8) {
-                    paidHours = 7.6;
-                    otHours = realHours - 8;
-                    grossPay = (7.6 * BASE_RATE) + (otHours * OT_RATE);
-                } else {
-                    paidHours = realHours;
-                    grossPay = realHours * BASE_RATE;
-                }
-            }
-
-            let taxAmount = grossPay * TAX_RATE;
-            let netPay = grossPay - taxAmount;
-            let superPay = grossPay * SUPER_RATE;
-
             const newWork = { 
                 type: 'work',
                 date: dateStr, 
                 start, 
                 end, 
                 realHours: realHours.toFixed(1), 
-                paidHours: paidHours.toFixed(1), 
-                otHours: otHours.toFixed(1), 
-                grossPay,
-                netPay,
-                superPay,
+                paidHours: realHours.toFixed(1), 
+                otHours: "0.0", 
+                grossPay: 0,
+                netPay: 0,
+                superPay: 0,
                 memo,
-                isSunday 
+                isSunday: false,
+                isSaturday: false
             };
 
             workData.unshift(newWork);
             localStorage.setItem('workData', JSON.stringify(workData));
             
-            // ปรับแก้ fetch รองรับ S26 Ultra / Android Local File
+            recalculatePayRates();
+            localStorage.setItem('workData', JSON.stringify(workData));
+
+            const savedItem = workData[0];
+
             if(SCRIPT_URL !== "YOUR_WEB_APP_URL") {
                 fetch(SCRIPT_URL, { 
                     method: 'POST', 
                     mode: 'no-cors', 
                     headers: { 'Content-Type': 'text/plain' },
                     redirect: 'follow',
-                    body: JSON.stringify(newWork) 
+                    body: JSON.stringify(savedItem) 
                 });
             }
 
@@ -1150,6 +1294,7 @@
             const categorySelect = document.getElementById('expense-category').value;
             const otherDesc = document.getElementById('expense-other-desc').value;
             const amount = document.getElementById('expense-amount').value;
+            const memo = document.getElementById('expense-memo').value;
 
             let category = categorySelect;
             if ((categorySelect.includes('อื่นๆ') || categorySelect.includes('Others')) && otherDesc.trim() !== '') {
@@ -1160,13 +1305,13 @@
                 type: 'expense',
                 date, 
                 category, 
-                amount 
+                amount,
+                memo
             };
 
             expenseData.unshift(newExpense);
             localStorage.setItem('expenseData', JSON.stringify(expenseData));
             
-            // ปรับแก้ fetch รองรับ S26 Ultra / Android Local File
             if(SCRIPT_URL !== "YOUR_WEB_APP_URL") {
                 fetch(SCRIPT_URL, { 
                     method: 'POST', 
@@ -1179,6 +1324,7 @@
 
             document.getElementById('expense-amount').value = '';
             document.getElementById('expense-other-desc').value = '';
+            document.getElementById('expense-memo').value = '';
             document.getElementById('other-desc-group').style.display = 'none';
             renderData();
 
