@@ -4,524 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Work & Expense Tracker</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2910/2910756.png">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --success: #10b981;
-            --sunday-color: #f59e0b;
-            --super-color: #8b5cf6;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Prompt', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 600px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        header h1 {
-            font-size: 1.5rem;
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        header p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 4px;
-        }
-
-        .lang-switch-box {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 12px;
-        }
-
-        .lang-btn {
-            background: #e2e8f0;
-            border: 1px solid var(--border-color);
-            padding: 6px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--text-main);
-            transition: all 0.2s;
-        }
-
-        .lang-btn:hover {
-            background: #cbd5e1;
-        }
-
-        .backup-box {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .backup-btn {
-            background-color: #0d9488;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .backup-btn.pdf-btn {
-            background-color: #6366f1;
-        }
-
-        .backup-btn:hover {
-            opacity: 0.9;
-        }
-
-        .summary-box {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .summary-card {
-            background: linear-gradient(135deg, #4f46e5, #6366f1);
-            color: white;
-            padding: 16px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
-        }
-
-        .summary-card.expense {
-            background: linear-gradient(135deg, #059669, #10b981);
-            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
-        }
-
-        .summary-card h3 {
-            font-size: 0.85rem;
-            font-weight: 400;
-            opacity: 0.9;
-        }
-
-        .summary-card p {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-top: 4px;
-        }
-
-        .summary-card span {
-            display: block;
-            font-size: 0.75rem;
-            opacity: 0.85;
-            margin-top: 2px;
-        }
-
-        .realtime-summary {
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .realtime-summary h3 {
-            font-size: 0.95rem;
-            color: var(--primary);
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .rt-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .rt-item {
-            background: #f8fafc;
-            padding: 8px 10px;
-            border-radius: 8px;
-        }
-
-        .rt-item b {
-            color: var(--text-main);
-        }
-
-        .super-item {
-            background: #f3e8ff;
-            border-left: 3px solid var(--super-color);
-        }
-
-        .super-item b {
-            color: var(--super-color);
-        }
-
-        .fortnight-card {
-            background: linear-gradient(135deg, #0ea5e9, #2563eb);
-            color: white;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.2);
-        }
-
-        .fortnight-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .fortnight-header h2 {
-            font-size: 1.05rem;
-            font-weight: 500;
-        }
-
-        .fn-nav-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        .fn-nav-btn:hover {
-            background: rgba(255, 255, 255, 0.35);
-        }
-
-        #fn-date-range {
-            text-align: center;
-            font-size: 0.85rem;
-            margin-bottom: 12px;
-            opacity: 0.95;
-            background: rgba(0, 0, 0, 0.1);
-            padding: 4px;
-            border-radius: 6px;
-        }
-
-        .fn-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .fn-box {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 12px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .fn-box h4 {
-            font-size: 0.75rem;
-            font-weight: 400;
-            opacity: 0.9;
-        }
-
-        .fn-box p {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-top: 4px;
-        }
-
-        .fn-box span {
-            display: block;
-            font-size: 0.7rem;
-            opacity: 0.8;
-            margin-top: 2px;
-        }
-
-        .fn-inputs {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-            border-radius: 10px;
-        }
-
-        .fn-input-group label {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 4px;
-        }
-
-        .fn-input-group input {
-            padding: 6px 10px;
-            font-size: 0.85rem;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.9);
-            color: #1e293b;
-        }
-
-        .savings-card {
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-
-        .savings-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .progress-bar-bg {
-            background: #e2e8f0;
-            border-radius: 10px;
-            height: 12px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            background: linear-gradient(90deg, #10b981, #059669);
-            height: 100%;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .chart-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            margin-bottom: 20px;
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .chart-header h2 {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .chart-header select {
-            width: auto;
-            padding: 4px 8px;
-            font-size: 0.85rem;
-        }
-
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 250px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            margin-bottom: 20px;
-        }
-
-        .card h2 {
-            font-size: 1.1rem;
-            margin-bottom: 16px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 0.95rem;
-            outline: none;
-            transition: all 0.2s;
-            background: #ffffff;
-        }
-
-        input:focus, select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
-
-        button[type="submit"] {
-            width: 100%;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        button[type="submit"]:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .history-list {
-            margin-top: 16px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: #f8fafc;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            border-left: 4px solid var(--primary);
-        }
-
-        .history-item.sunday-item {
-            border-left-color: var(--sunday-color);
-            background: #fffbeb;
-        }
-
-        .history-item.saturday-item {
-            border-left-color: #3b82f6;
-            background: #eff6ff;
-        }
-
-        .history-item.expense-item {
-            border-left-color: var(--success);
-        }
-
-        .history-item div span {
-            display: block;
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        .memo-tag {
-            font-style: italic;
-            color: #6366f1 !important;
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: #ef4444;
-            cursor: pointer;
-            font-size: 0.85rem;
-            padding: 4px 8px;
-            width: auto;
-        }
-
-        .delete-btn:hover {
-            background: #fee2e2;
-            border-radius: 4px;
-        }
-
-        @media print {
-            .backup-box, .lang-switch-box, form, .delete-btn, .fn-nav-btn {
-                display: none !important;
-            }
-            body {
-                background: white;
-                padding: 0;
-            }
-            .card, .summary-card, .fortnight-card, .realtime-summary, .chart-card {
-                box-shadow: none;
-                border: 1px solid #ccc;
-            }
-        }
+        :root{--primary:#4f46e5;--primary-hover:#4338ca;--bg:#f8fafc;--card:#fff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--success:#10b981;--sun:#f59e0b;--super:#8b5cf6}
+        *{box-sizing:border-box;margin:0;padding:0;font-family:'Prompt',sans-serif}
+        body{background:var(--bg);color:var(--text);padding:16px;display:flex;justify-content:center}
+        .container{width:100%;max-width:600px}
+        header{text-align:center;margin-bottom:16px}
+        header h1{font-size:1.4rem;color:var(--primary);font-weight:600}
+        header p{color:var(--muted);font-size:.85rem}
+        .lang-switch{display:flex;justify-content:flex-end;margin-bottom:8px}
+        .lang-btn{background:#e2e8f0;border:1px solid var(--border);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.8rem;font-weight:500}
+        .card{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 2px 4px rgba(0,0,0,.05);margin-bottom:16px;border:1px solid var(--border)}
+        .card h2,.card h3{font-size:1rem;margin-bottom:12px;color:var(--primary);font-weight:600}
+        .rt-grid,.fn-grid,.form-row,.summary-box,.backup-box,.fn-inputs{display:grid;gap:8px}
+        .rt-grid,.fn-grid,.form-row,.summary-box,.backup-box,.fn-inputs{grid-template-columns:1fr 1fr}
+        .rt-item,.fn-box{background:#f8fafc;padding:8px 10px;border-radius:8px;font-size:.8rem;color:var(--muted)}
+        .rt-item b,.fn-box p{color:var(--text);font-weight:600}
+        .super-item{background:#f3e8ff;border-left:3px solid var(--super);grid-column:span 2}
+        .fortnight-card{background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;border-radius:14px;padding:16px;margin-bottom:16px}
+        .fortnight-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+        .fn-nav-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:2px 8px;border-radius:6px;cursor:pointer;font-size:.75rem}
+        #fn-date-range{text-align:center;font-size:.8rem;background:rgba(0,0,0,.1);padding:4px;border-radius:6px;margin-bottom:8px}
+        .fn-box{background:rgba(255,255,255,.15);color:#fff;text-align:center}
+        .fn-box p{color:#fff;font-size:1rem}
+        .fn-inputs{background:rgba(255,255,255,.1);padding:8px;border-radius:8px;margin-top:8px}
+        .fn-inputs label{color:rgba(255,255,255,.9);font-size:.7rem}
+        .fn-inputs input{padding:4px 8px;font-size:.8rem;border-radius:4px;border:none}
+        .progress-bar-bg{background:#e2e8f0;border-radius:8px;height:10px;overflow:hidden;margin-top:6px}
+        .progress-bar-fill{background:linear-gradient(90deg,#10b981,#059669);height:100%;width:0%;transition:width .3s}
+        .form-group{margin-bottom:10px}
+        label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px}
+        input,select{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:.9rem;outline:none}
+        button[type="submit"]{width:100%;background:var(--primary);color:#fff;border:none;padding:10px;border-radius:6px;font-size:.9rem;font-weight:500;cursor:pointer}
+        .history-list{margin-top:12px;max-height:250px;overflow-y:auto}
+        .history-item{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#f8fafc;border-radius:6px;margin-bottom:6px;font-size:.85rem;border-left:4px solid var(--primary)}
+        .history-item.sunday-item{border-left-color:var(--sun);background:#fffbeb}
+        .history-item.saturday-item{border-left-color:#3b82f6;background:#eff6ff}
+        .history-item.expense-item{border-left-color:var(--success)}
+        .history-item span{display:block;font-size:.75rem;color:var(--muted)}
+        .delete-btn{background:none;border:none;color:#ef4444;cursor:pointer;font-size:.8rem;padding:2px 6px}
+        .backup-btn{background:#0d9488;color:#fff;border:none;padding:8px;border-radius:6px;font-size:.8rem;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center}
+        .backup-btn.pdf-btn{background:#6366f1}
+        .summary-card{background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;padding:12px;border-radius:12px;text-align:center}
+        .summary-card.expense{background:linear-gradient(135deg,#059669,#10b981)}
+        @media print{.backup-box,.lang-switch,form,.delete-btn,.fn-nav-btn{display:none!important}}
     </style>
 </head>
 <body>
-
     <div class="container">
-        <div class="lang-switch-box">
-            <button class="lang-btn" onclick="toggleLanguage()" id="lang-btn">🇬🇧 English</button>
-        </div>
+        <div class="lang-switch"><button class="lang-btn" onclick="toggleLanguage()" id="lang-btn">🇬🇧 English</button></div>
+        <header><h1 data-i18n="title">บันทึกงานและรายจ่าย</h1><p id="current-date-display"></p></header>
 
-        <header>
-            <h1 data-i18n="title">บันทึกงานและรายจ่าย</h1>
-            <p id="current-date-display"></p>
-        </header>
-
-        <div class="realtime-summary">
+        <div class="card realtime-summary">
             <h3 data-i18n="rt_title">📊 สรุปรายละเอียดรายรับรวม (เรียลไทม์)</h3>
             <div class="rt-grid">
-                <div class="rt-item"><span data-i18n="rt_real_hrs">ชั่วโมงทำงานจริงรวม:</span> <b id="rt-real-hours">0.0 ชม.</b></div>
-                <div class="rt-item"><span data-i18n="rt_paid_hrs">ชั่วโมงคิดเงินรวม:</span> <b id="rt-paid-hours">0.0 ชม.</b></div>
-                <div class="rt-item"><span data-i18n="rt_gross">ยอดก่อนหัก Tax:</span> <b id="rt-gross">$0.00 AUD</b></div>
-                <div class="rt-item"><span data-i18n="rt_tax">ยอดหัก Tax (21%):</span> <b id="rt-tax">$0.00 AUD</b></div>
-                <div class="rt-item super-item" style="grid-column: span 2;">
-                    <span data-i18n="rt_super">🏦 สะสมเงินเกษียณ Super (11.5%):</span> <b id="rt-super">$0.00 AUD</b>
-                </div>
+                <div class="rt-item"><span data-i18n="rt_real_hrs">ชั่วโมงจริง:</span> <b id="rt-real-hours">0.0 ชม.</b></div>
+                <div class="rt-item"><span data-i18n="rt_paid_hrs">ชั่วโมงคิดเงิน:</span> <b id="rt-paid-hours">0.0 ชม.</b></div>
+                <div class="rt-item"><span data-i18n="rt_gross">ก่อน Tax:</span> <b id="rt-gross">$0.00</b></div>
+                <div class="rt-item"><span data-i18n="rt_tax">หัก Tax (21%):</span> <b id="rt-tax">$0.00</b></div>
+                <div class="rt-item super-item"><span data-i18n="rt_super">🏦 สะสม Super (11.5%):</span> <b id="rt-super">$0.00 AUD</b></div>
             </div>
         </div>
 
@@ -531,64 +77,34 @@
                 <h2 data-i18n="fn_title">📅 รอบ Fortnight</h2>
                 <button class="fn-nav-btn" onclick="changeFortnight(1)" data-i18n="fn_next">รอบถัดไป ▶</button>
             </div>
-            <div id="fn-date-range">กำลังโหลดช่วงวันที่...</div>
+            <div id="fn-date-range">กำลังโหลด...</div>
             <div class="fn-grid">
-                <div class="fn-box">
-                    <h4 data-i18n="fn_net_title">ยอดรวมสุทธิรอบนี้</h4>
-                    <p id="fn-net-sum">$0.00 AUD</p>
-                    <span id="fn-deduct-note">หักค่าบ้าน + ค่าวีซ่า</span>
-                </div>
-                <div class="fn-box">
-                    <h4 data-i18n="fn_takehome_title">เงินรับจริง (หลังหักค่าใช้จ่าย)</h4>
-                    <p id="fn-takehome-sum">$0.00 AUD</p>
-                    <span data-i18n="fn_takehome_sub">ยอดรับเข้ากระเป๋า</span>
-                </div>
+                <div class="fn-box"><h4 data-i18n="fn_net_title">สุทธิรอบนี้</h4><p id="fn-net-sum">$0.00</p><span id="fn-deduct-note">หักค่าบ้าน + วีซ่า</span></div>
+                <div class="fn-box"><h4 data-i18n="fn_takehome_title">เงินรับจริง</h4><p id="fn-takehome-sum">$0.00</p><span data-i18n="fn_takehome_sub">รับเข้ากระเป๋า</span></div>
             </div>
-
             <div class="fn-inputs">
-                <div class="fn-input-group">
-                    <label data-i18n="label_elec">⚡ ค่าไฟรอบนี้ ($)</label>
-                    <input type="number" step="any" id="fn-elec-input" placeholder="0.00" onchange="saveAndSyncUtilities()">
-                </div>
-                <div class="fn-input-group">
-                    <label data-i18n="label_gas">🔥 ค่าแก๊สรอบนี้ ($)</label>
-                    <input type="number" step="any" id="fn-gas-input" placeholder="0.00" onchange="saveAndSyncUtilities()">
-                </div>
-            </div>
-        </div>
-
-        <div class="savings-card">
-            <div class="savings-header">
-                <span data-i18n="savings_title">💡 สัดส่วนเงินคงเหลือเก็บสะสม</span>
-                <b id="savings-percent">0%</b>
-            </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="savings-bar"></div>
+                <div><label data-i18n="label_elec">⚡ ค่าไฟ ($)</label><input type="number" step="any" id="fn-elec-input" placeholder="0.00" onchange="saveAndSyncUtilities()"></div>
+                <div><label data-i18n="label_gas">🔥 ค่าแก๊ส ($)</label><input type="number" step="any" id="fn-gas-input" placeholder="0.00" onchange="saveAndSyncUtilities()"></div>
             </div>
         </div>
 
         <div class="card">
-            <h2 data-i18n="work_form_title">⏱️ บันทึกเวลาเข้า-ออกงาน (เรท $29.44 / เสาร์ 1.5× / อาทิตย์ 2× / เกิน 76 ชม. คิด OT 1.5×)</h2>
+            <div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted)">
+                <span data-i18n="savings_title">💡 สัดส่วนเงินคงเหลือเก็บสะสม</span><b id="savings-percent">0%</b>
+            </div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="savings-bar"></div></div>
+        </div>
+
+        <div class="card">
+            <h2 data-i18n="work_form_title">⏱️ บันทึกเวลาเข้า-ออกงาน</h2>
             <form id="work-form">
-                <div class="form-group">
-                    <label data-i18n="label_date">วันที่</label>
-                    <input type="date" id="work-date" required>
-                </div>
+                <div class="form-group"><label data-i18n="label_date">วันที่</label><input type="date" id="work-date" required></div>
                 <div class="form-row">
-                    <div class="form-group">
-                        <label data-i18n="label_start">เวลาเข้างาน</label>
-                        <input type="time" id="work-start" required>
-                    </div>
-                    <div class="form-group">
-                        <label data-i18n="label_end">เวลาเลิกงาน</label>
-                        <input type="time" id="work-end" required>
-                    </div>
+                    <div class="form-group"><label data-i18n="label_start">เข้างาน</label><input type="time" id="work-start" required></div>
+                    <div class="form-group"><label data-i18n="label_end">เลิกงาน</label><input type="time" id="work-end" required></div>
                 </div>
-                <div class="form-group">
-                    <label data-i18n="label_memo">หมายเหตุ / Memo (เช่น ส่งไก่กะเช้า, งานฟาร์ม)</label>
-                    <input type="text" id="work-memo" placeholder="...">
-                </div>
-                <button type="submit" data-i18n="btn_save_work">บันทึกและซิงค์เข้า Google Drive</button>
+                <div class="form-group"><label data-i18n="label_memo">หมายเหตุ / Memo</label><input type="text" id="work-memo" placeholder="..."></div>
+                <button type="submit" data-i18n="btn_save_work">บันทึกและซิงค์ Drive</button>
             </form>
             <div class="history-list" id="work-history"></div>
         </div>
@@ -596,833 +112,279 @@
         <div class="card">
             <h2 data-i18n="expense_form_title">💸 บันทึกรายจ่ายประจำวัน (AUD)</h2>
             <form id="expense-form">
-                <div class="form-group">
-                    <label data-i18n="label_date">วันที่</label>
-                    <input type="date" id="expense-date" required>
-                </div>
+                <div class="form-group"><label data-i18n="label_date">วันที่</label><input type="date" id="expense-date" required></div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label data-i18n="label_cat">หมวดหมู่รายจ่าย</label>
+                        <label data-i18n="label_cat">หมวดหมู่</label>
                         <select id="expense-category" onchange="toggleOtherInput()" required>
-                            <option value="🍽️ ค่าอาหาร" data-i18n="cat_food">🍽️ ค่าอาหาร</option>
-                            <option value="⛽ ค่าน้ำมัน" data-i18n="cat_fuel">⛽ ค่าน้ำมัน</option>
-                            <option value="🛒 ซื้อของต่างๆ" data-i18n="cat_groceries">🛒 ซื้อของต่างๆ</option>
-                            <option value="⚡ ค่าไฟ" data-i18n="cat_electricity">⚡ ค่าไฟ (Electricity)</option>
-                            <option value="🔥 ค่าแก๊ส" data-i18n="cat_gas">🔥 ค่าแก๊ส (Gas)</option>
-                            <option value="📌 อื่นๆ" data-i18n="cat_other">📌 อื่นๆ (ระบุ)</option>
+                            <option value="🍽️ ค่าอาหาร">🍽️ ค่าอาหาร</option>
+                            <option value="⛽ ค่าน้ำมัน">⛽ ค่าน้ำมัน</option>
+                            <option value="🛒 ซื้อของต่างๆ">🛒 ซื้อของต่างๆ</option>
+                            <option value="⚡ ค่าไฟ">⚡ ค่าไฟ</option>
+                            <option value="🔥 ค่าแก๊ส">🔥 ค่าแก๊ส</option>
+                            <option value="📌 อื่นๆ">📌 อื่นๆ (ระบุ)</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label data-i18n="label_amount">จำนวนเงิน (AUD)</label>
-                        <input type="number" step="any" id="expense-amount" placeholder="0.00" required>
-                    </div>
+                    <div class="form-group"><label data-i18n="label_amount">จำนวนเงิน (AUD)</label><input type="number" step="any" id="expense-amount" placeholder="0.00" required></div>
                 </div>
-                <div class="form-group" id="other-desc-group" style="display: none;">
-                    <label data-i18n="label_other_desc">ระบุรายละเอียดค่าใช้จ่ายอื่นๆ</label>
-                    <input type="text" id="expense-other-desc" placeholder="...">
-                </div>
-                <div class="form-group">
-                    <label data-i18n="label_exp_memo">หมายเหตุ / Memo (เช่น ซื้อของ Coles, เติมน้ำมัน Shell)</label>
-                    <input type="text" id="expense-memo" placeholder="...">
-                </div>
-                <button type="submit" data-i18n="btn_save_expense">บันทึกรายจ่ายและซิงค์เข้า Drive</button>
+                <div class="form-group" id="other-desc-group" style="display:none"><label data-i18n="label_other_desc">ระบุรายละเอียด</label><input type="text" id="expense-other-desc" placeholder="..."></div>
+                <div class="form-group"><label data-i18n="label_exp_memo">หมายเหตุ / Memo</label><input type="text" id="expense-memo" placeholder="..."></div>
+                <button type="submit" data-i18n="btn_save_expense">บันทึกรายจ่ายและซิงค์ Drive</button>
             </form>
             <div class="history-list" id="expense-history"></div>
         </div>
 
-        <div class="chart-card">
-            <div class="chart-header">
-                <h2 data-i18n="chart_bar_title">📈 เปรียบเทียบ รายรับ - รายจ่าย รายเดือน</h2>
-                <select id="year-select" onchange="renderCharts()">
-                    <option value="2026">2026</option>
-                    <option value="2027">2027</option>
-                    <option value="2028">2028</option>
+        <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                <h2 data-i18n="chart_bar_title" style="margin:0">📈 รายรับ - รายจ่าย รายเดือน</h2>
+                <select id="year-select" style="width:auto;padding:2px 6px" onchange="renderCharts()">
+                    <option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option>
                 </select>
             </div>
-            <div class="chart-container">
-                <canvas id="monthlyBarChart"></canvas>
-            </div>
+            <div style="height:200px"><canvas id="monthlyBarChart"></canvas></div>
         </div>
 
-        <div class="chart-card">
-            <div class="chart-header">
-                <h2 data-i18n="chart_pie_title">🍩 สัดส่วนรายจ่ายตามหมวดหมู่</h2>
-                <select id="expense-scope-select" onchange="renderCharts()">
+        <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                <h2 data-i18n="chart_pie_title" style="margin:0">🍩 สัดส่วนรายจ่าย</h2>
+                <select id="expense-scope-select" style="width:auto;padding:2px 6px" onchange="renderCharts()">
                     <option value="current_month" data-i18n="scope_month">เดือนนี้</option>
                     <option value="all_time" data-i18n="scope_all">ทั้งหมด</option>
                 </select>
             </div>
-            <div class="chart-container" style="height: 220px;">
-                <canvas id="expensePieChart"></canvas>
-            </div>
+            <div style="height:180px"><canvas id="expensePieChart"></canvas></div>
         </div>
 
         <div class="backup-box">
-            <a href="https://sheets.google.com" target="_blank" class="backup-btn drive" data-i18n="btn_drive">☁️ เปิด Google Sheets</a>
+            <a href="https://sheets.google.com" target="_blank" class="backup-btn" data-i18n="btn_drive">☁️ เปิด Google Sheets</a>
             <button class="backup-btn pdf-btn" onclick="window.print()" data-i18n="btn_pdf">📄 พิมพ์ / เซฟ PDF</button>
         </div>
 
         <div class="summary-box">
-            <div class="summary-card">
-                <h3 data-i18n="sum_net_title">รายรับสุทธิ (รวมทั้งหมด)</h3>
-                <p id="total-net-sum">$0.00 AUD</p>
-                <span id="total-gross-sum">ก่อนหัก Tax: $0.00</span>
-            </div>
-            <div class="summary-card expense">
-                <h3 data-i18n="sum_expense_title">รายจ่ายรวม (AUD)</h3>
-                <p id="total-expense-sum">$0.00 AUD</p>
-                <span>&nbsp;</span>
-            </div>
+            <div class="summary-card"><h3 data-i18n="sum_net_title">รายรับสุทธิรวม</h3><p id="total-net-sum">$0.00</p><span id="total-gross-sum">ก่อน Tax: $0.00</span></div>
+            <div class="summary-card expense"><h3 data-i18n="sum_expense_title">รายจ่ายรวม</h3><p id="total-expense-sum">$0.00</p><span>&nbsp;</span></div>
         </div>
-
     </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyBwA8Ejw8sAr4tLX3JoZUGRcRnOa6RiDR1KIHuosIglpa6SOLDgqRp2Y0i7iNB6Wys/exec";
+        const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyBwA8Ejw8sAr4tLX3JoZUGRcRnOa6RiDR1KIHuosIglpa6SOLDgqRp2Y0i7iNB6Wys/exec";
+        const BASE_RATE=29.4478, OT_RATE=BASE_RATE*1.5, SUNDAY_RATE=BASE_RATE*2, TAX_RATE=0.21, SUPER_RATE=0.115, RENT_PER_FN=380, VISA_PER_FN=250;
+        const ANCHOR_THURSDAY=new Date('2026-07-30T00:00:00');
+        let currentLang=localStorage.getItem('appLang')||'th';
 
-        const BASE_RATE = 29.4478; 
-        const OT_RATE = BASE_RATE * 1.5; 
-        const SUNDAY_RATE = BASE_RATE * 2; 
-        const TAX_RATE = 0.21; 
-        const SUPER_RATE = 0.115; 
-        const RENT_PER_FORTNIGHT = 380; 
-        const VISA_PER_FORTNIGHT = 250; 
-
-        const ANCHOR_THURSDAY = new Date('2026-07-30T00:00:00');
-
-        let currentLang = localStorage.getItem('appLang') || 'th';
-
-        const i18n = {
-            th: {
-                title: "บันทึกงานและรายจ่าย",
-                btn_drive: "☁️ เปิด Google Sheets",
-                btn_pdf: "📄 พิมพ์ / เซฟ PDF",
-                sum_net_title: "รายรับสุทธิ (รวมทั้งหมด)",
-                sum_gross_sub: "ก่อนหัก Tax: ",
-                sum_expense_title: "รายจ่ายรวม (AUD)",
-                rt_title: "📊 สรุปรายละเอียดรายรับรวม (เรียลไทม์)",
-                rt_real_hrs: "ชั่วโมงทำงานจริงรวม:",
-                rt_paid_hrs: "ชั่วโมงคิดเงินรวม:",
-                rt_gross: "ยอดก่อนหัก Tax:",
-                rt_tax: "ยอดหัก Tax (21%):",
-                rt_super: "🏦 สะสมเงินเกษียณ Super (11.5%):",
-                fn_prev: "◀ รอบก่อน",
-                fn_title: "📅 รอบ Fortnight",
-                fn_next: "รอบถัดไป ▶",
-                fn_net_title: "ยอดรวมสุทธิรอบนี้",
-                fn_deduct_visa: "หักค่าบ้าน (-$380) + วีซ่า (-$250) + ไฟ/แก๊ส",
-                fn_deduct_novisa: "หักค่าบ้าน (-$380) + ไฟ/แก๊ส [หมดค่าวีซ่าแล้ว]",
-                fn_takehome_title: "เงินรับจริง (หลังหักค่าใช้จ่าย)",
-                fn_takehome_sub: "ยอดรับเข้ากระเป๋า",
-                label_elec: "⚡ ค่าไฟรอบนี้ ($)",
-                label_gas: "🔥 ค่าแก๊สรอบนี้ ($)",
-                savings_title: "💡 สัดส่วนเงินคงเหลือเก็บสะสม",
-                savings_sub: "เงินเหลือเก็บ",
-                chart_bar_title: "📈 เปรียบเทียบ รายรับ - รายจ่าย รายเดือน",
-                chart_pie_title: "🍩 สัดส่วนรายจ่ายตามหมวดหมู่",
-                scope_month: "เดือนนี้",
-                scope_all: "ทั้งหมด",
-                work_form_title: "⏱️ บันทึกเวลาเข้า-ออกงาน (เรท $29.44 / เสาร์ 1.5× / อาทิตย์ 2× / เกิน 76 ชม. คิด OT 1.5×)",
-                label_date: "วันที่",
-                label_start: "เวลาเข้างาน",
-                label_end: "เวลาเลิกงาน",
-                label_memo: "หมายเหตุ / Memo (เช่น ส่งไก่กะเช้า, งานฟาร์ม)",
-                label_exp_memo: "หมายเหตุ / Memo (เช่น ซื้อของ Coles, เติมน้ำมัน Shell)",
-                btn_save_work: "บันทึกและซิงค์เข้า Google Drive",
-                expense_form_title: "💸 บันทึกรายจ่ายประจำวัน (AUD)",
-                label_cat: "หมวดหมู่รายจ่าย",
-                cat_food: "🍽️ ค่าอาหาร",
-                cat_fuel: "⛽ ค่าน้ำมัน",
-                cat_groceries: "🛒 ซื้อของต่างๆ",
-                cat_electricity: "⚡ ค่าไฟ (Electricity)",
-                cat_gas: "🔥 ค่าแก๊ส (Gas)",
-                cat_other: "📌 อื่นๆ (ระบุ)",
-                label_other_desc: "ระบุรายละเอียดค่าใช้จ่ายอื่นๆ",
-                label_amount: "จำนวนเงิน (AUD)",
-                btn_save_expense: "บันทึกรายจ่ายและซิงค์เข้า Drive",
-                sun_badge: "(☀️ วันอาทิตย์เรท ×2)",
-                sat_badge: "(🌤️ วันเสาร์เรท ×1.5)",
-                work_hist_hrs: "ทำจริง: {real} ชม. | คิดให้: {paid} ชม.",
-                work_hist_net: "ก่อน Tax: ${gross} | สุทธิหลังหัก Tax (21%): +${net} AUD",
-                delete: "ลบ",
-                exp_hist_pay: "จ่ายสุทธิ: -${amt} AUD",
-                chart_net_income: "รายรับสุทธิ ($)",
-                chart_expense: "รายจ่าย ($)"
-            },
-            en: {
-                title: "Work & Expense Tracker",
-                btn_drive: "☁️ Open Google Sheets",
-                btn_pdf: "📄 Print / Save PDF",
-                sum_net_title: "Net Income (Total)",
-                sum_gross_sub: "Before Tax: ",
-                sum_expense_title: "Total Expenses (AUD)",
-                rt_title: "📊 Realtime Income Summary",
-                rt_real_hrs: "Total Actual Hours:",
-                rt_paid_hrs: "Total Paid Hours:",
-                rt_gross: "Gross Earnings:",
-                rt_tax: "Tax Deducted (21%):",
-                rt_super: "🏦 Superannuation (11.5%):",
-                fn_prev: "◀ Prev",
-                fn_title: "📅 Fortnight Period",
-                fn_next: "Next ▶",
-                fn_net_title: "Fortnight Net Total",
-                fn_deduct_visa: "Deduct Rent (-$380) + Visa (-$250) + Utilities",
-                fn_deduct_novisa: "Deduct Rent (-$380) + Utilities [Visa Completed]",
-                fn_takehome_title: "Actual Take-Home Pay",
-                fn_takehome_sub: "Pocketed Earnings",
-                label_elec: "⚡ Elec Bill ($)",
-                label_gas: "🔥 Gas Bill ($)",
-                savings_title: "💡 Savings Ratio Status",
-                savings_sub: "Savings Ratio",
-                chart_bar_title: "📈 Monthly Income vs Expense",
-                chart_pie_title: "🍩 Expense Categories Breakdown",
-                scope_month: "This Month",
-                scope_all: "All Time",
-                work_form_title: "⏱️ Shift Entry (Rate $29.44 / Sat ×1.5 / Sun ×2 / Over 76h OT 1.5×)",
-                label_date: "Date",
-                label_start: "Start Time",
-                label_end: "End Time",
-                label_memo: "Notes / Memo (e.g. Morning Shift, Farm Work)",
-                label_exp_memo: "Notes / Memo (e.g. Coles Shopping, Shell Fuel)",
-                btn_save_work: "Save & Sync to Google Drive",
-                expense_form_title: "💸 Daily Expenses (AUD)",
-                label_cat: "Category",
-                cat_food: "🍽️ Food & Meals",
-                cat_fuel: "⛽ Fuel / Gas",
-                cat_groceries: "🛒 Shopping / Groceries",
-                cat_electricity: "⚡ Electricity Bill",
-                cat_gas: "🔥 Gas Bill",
-                cat_other: "📌 Others (Specify)",
-                label_other_desc: "Specify Other Expense Details",
-                label_amount: "Amount (AUD)",
-                btn_save_expense: "Save Expense & Sync",
-                sun_badge: "(☀️ Sunday Rate ×2)",
-                sat_badge: "(🌤️ Saturday Rate ×1.5)",
-                work_hist_hrs: "Actual: {real} hrs | Paid: {paid} hrs",
-                work_hist_net: "Gross: ${gross} | Net after 21% Tax: +${net} AUD",
-                delete: "Delete",
-                exp_hist_pay: "Net Expense: -${amt} AUD",
-                chart_net_income: "Net Income ($)",
-                chart_expense: "Expenses ($)"
-            }
+        const i18n={
+            th:{title:"บันทึกงานและรายจ่าย",btn_drive:"☁️ เปิด Google Sheets",btn_pdf:"📄 พิมพ์/PDF",sum_net_title:"รายรับสุทธิรวม",sum_gross_sub:"ก่อน Tax: ",sum_expense_title:"รายจ่ายรวม",rt_title:"📊 สรุปรายรับรวม (เรียลไทม์)",rt_real_hrs:"ชั่วโมงจริง:",rt_paid_hrs:"ชั่วโมงคิดเงิน:",rt_gross:"ก่อน Tax:",rt_tax:"หัก Tax (21%):",rt_super:"🏦 สะสม Super (11.5%):",fn_prev:"◀ รอบก่อน",fn_title:"📅 รอบ Fortnight",fn_next:"รอบถัดไป ▶",fn_net_title:"สุทธิรอบนี้",fn_deduct_visa:"หักค่าบ้าน (-$380) + วีซ่า (-$250) + ไฟ/แก๊ส",fn_deduct_novisa:"หักค่าบ้าน (-$380) + ไฟ/แก๊ส [หมดวีซ่าแล้ว]",fn_takehome_title:"เงินรับจริง",fn_takehome_sub:"รับเข้ากระเป๋า",label_elec:"⚡ ค่าไฟ ($)",label_gas:"🔥 ค่าแก๊ส ($)",savings_title:"💡 สัดส่วนเงินเก็บ",savings_sub:"เงินเหลือเก็บ",chart_bar_title:"📈 รายรับ - รายจ่าย รายเดือน",chart_pie_title:"🍩 สัดส่วนรายจ่าย",scope_month:"เดือนนี้",scope_all:"ทั้งหมด",work_form_title:"⏱️ บันทึกเวลาเข้า-ออกงาน",label_date:"วันที่",label_start:"เข้างาน",label_end:"เลิกงาน",label_memo:"หมายเหตุ / Memo",label_exp_memo:"หมายเหตุ / Memo",btn_save_work:"บันทึกและซิงค์ Drive",expense_form_title:"💸 บันทึกรายจ่ายประจำวัน (AUD)",label_cat:"หมวดหมู่",cat_food:"🍽️ ค่าอาหาร",cat_fuel:"⛽ ค่าน้ำมัน",cat_groceries:"🛒 ซื้อของต่างๆ",cat_electricity:"⚡ ค่าไฟ",cat_gas:"🔥 ค่าแก๊ส",cat_other:"📌 อื่นๆ",label_other_desc:"ระบุรายละเอียด",label_amount:"จำนวนเงิน (AUD)",btn_save_expense:"บันทึกรายจ่ายและซิงค์ Drive",sun_badge:"(☀️ อาทิตย์ ×2)",sat_badge:"(🌤️ เสาร์ ×1.5)",work_hist_hrs:"จริง: {real} ชม. | คิดให้: {paid} ชม.",work_hist_net:"ก่อน Tax: ${gross} | สุทธิ: +${net} AUD",delete:"ลบ",exp_hist_pay:"จ่ายสุทธิ: -${amt} AUD",chart_net_income:"รายรับสุทธิ ($)",chart_expense:"รายจ่าย ($)"},
+            en:{title:"Work & Expense Tracker",btn_drive:"☁️ Open Sheets",btn_pdf:"📄 Print/PDF",sum_net_title:"Net Total",sum_gross_sub:"Gross: ",sum_expense_title:"Expenses Total",rt_title:"📊 Income Realtime Summary",rt_real_hrs:"Actual Hrs:",rt_paid_hrs:"Paid Hrs:",rt_gross:"Gross:",rt_tax:"Tax (21%):",rt_super:"🏦 Super (11.5%):",fn_prev:"◀ Prev",fn_title:"📅 Fortnight Period",fn_next:"Next ▶",fn_net_title:"Fortnight Net",fn_deduct_visa:"Deduct Rent (-$380) + Visa (-$250) + Utils",fn_deduct_novisa:"Deduct Rent (-$380) + Utils [Visa Done]",fn_takehome_title:"Take-Home Pay",fn_takehome_sub:"Pocketed Earnings",label_elec:"⚡ Elec ($)",label_gas:"🔥 Gas ($)",savings_title:"💡 Savings Ratio",savings_sub:"Savings",chart_bar_title:"📈 Monthly Income vs Expense",chart_pie_title:"🍩 Expense Breakdown",scope_month:"This Month",scope_all:"All Time",work_form_title:"⏱️ Work Shift Entry",label_date:"Date",label_start:"Start",label_end:"End",label_memo:"Notes / Memo",label_exp_memo:"Notes / Memo",btn_save_work:"Save & Sync Drive",expense_form_title:"💸 Daily Expenses (AUD)",label_cat:"Category",cat_food:"🍽️ Food",cat_fuel:"⛽ Fuel",cat_groceries:"🛒 Groceries",cat_electricity:"⚡ Electricity",cat_gas:"🔥 Gas",cat_other:"📌 Others",label_other_desc:"Specify Details",label_amount:"Amount (AUD)",btn_save_expense:"Save Expense & Sync",sun_badge:"(☀️ Sun Rate ×2)",sat_badge:"(🌤️ Sat Rate ×1.5)",work_hist_hrs:"Actual: {real}h | Paid: {paid}h",work_hist_net:"Gross: ${gross} | Net: +${net} AUD",delete:"Delete",exp_hist_pay:"Spent: -${amt} AUD",chart_net_income:"Net Income ($)",chart_expense:"Expense ($)"}
         };
 
-        function toggleLanguage() {
-            currentLang = currentLang === 'th' ? 'en' : 'th';
-            localStorage.setItem('appLang', currentLang);
-            updateUI();
+        function toggleLanguage(){currentLang=currentLang==='th'?'en':'th';localStorage.setItem('appLang',currentLang);updateUI()}
+        function updateUI(){document.getElementById('lang-btn').innerText=currentLang==='th'?'🇬🇧 English':'🇹🇭 ภาษาไทย';document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(i18n[currentLang][k])el.innerText=i18n[currentLang][k]});renderData()}
+
+        const todayObj=new Date(), today=todayObj.toISOString().split('T')[0];
+        document.getElementById('work-date').value=today; document.getElementById('expense-date').value=today;
+
+        let workData=JSON.parse(localStorage.getItem('workData'))||[], expenseData=JSON.parse(localStorage.getItem('expenseData'))||[], fnUtilitiesData=JSON.parse(localStorage.getItem('fnUtilitiesData'))||{};
+        let fortnightOffset=0, barChartInstance=null, pieChartInstance=null;
+
+        function toggleOtherInput(){const c=document.getElementById('expense-category').value, g=document.getElementById('other-desc-group'), i=document.getElementById('expense-other-desc');g.style.display=(c.includes('อื่นๆ')||c.includes('Others'))?'block':'none';i.required=g.style.display==='block'}
+
+        function getFortnightInfo(targetDate=new Date(), offset=0){
+            const t=new Date(targetDate.getFullYear(),targetDate.getMonth(),targetDate.getDate()).getTime(), a=new Date(ANCHOR_THURSDAY.getFullYear(),ANCHOR_THURSDAY.getMonth(),ANCHOR_THURSDAY.getDate()).getTime();
+            let rem=Math.floor((t-a)/(86400000))%14; if(rem<0)rem+=14;
+            const fnStart=new Date(t); fnStart.setDate(fnStart.getDate()-rem+(offset*14));
+            const fnEnd=new Date(fnStart); fnEnd.setDate(fnEnd.getDate()+13);
+            return {fnStart,fnEnd};
         }
 
-        function updateUI() {
-            document.getElementById('lang-btn').innerText = currentLang === 'th' ? '🇬🇧 English' : '🇹🇭 ภาษาไทย';
-            
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (i18n[currentLang][key]) {
-                    el.innerText = i18n[currentLang][key];
-                }
-            });
+        function changeFortnight(dir){fortnightOffset+=dir;renderData()}
 
+        function saveAndSyncUtilities(){
+            const currentFn=getFortnightInfo(todayObj,fortnightOffset), fnKey=currentFn.fnStart.toISOString().split('T')[0];
+            const eVal=Number(document.getElementById('fn-elec-input').value)||0, gVal=Number(document.getElementById('fn-gas-input').value)||0;
+            fnUtilitiesData[fnKey]={elec:eVal,gas:gVal}; localStorage.setItem('fnUtilitiesData',JSON.stringify(fnUtilitiesData));
+            if(eVal>0) syncExpenseToDrive(fnKey,'⚡ ค่าไฟ',eVal,'Fortnight Utility');
+            if(gVal>0) syncExpenseToDrive(fnKey,'🔥 ค่าแก๊ส',gVal,'Fortnight Utility');
             renderData();
         }
 
-        const todayObj = new Date();
-        const today = todayObj.toISOString().split('T')[0];
-        document.getElementById('work-date').value = today;
-        document.getElementById('expense-date').value = today;
-
-        let workData = JSON.parse(localStorage.getItem('workData')) || [];
-        let expenseData = JSON.parse(localStorage.getItem('expenseData')) || [];
-        let fnUtilitiesData = JSON.parse(localStorage.getItem('fnUtilitiesData')) || {};
-
-        let fortnightOffset = 0;
-        let barChartInstance = null;
-        let pieChartInstance = null;
-
-        const workForm = document.getElementById('work-form');
-        const expenseForm = document.getElementById('expense-form');
-        const workHistory = document.getElementById('work-history');
-        const expenseHistory = document.getElementById('expense-history');
-        const totalNetSum = document.getElementById('total-net-sum');
-        const totalGrossSum = document.getElementById('total-gross-sum');
-        const totalExpenseSum = document.getElementById('total-expense-sum');
-        const fnNetSum = document.getElementById('fn-net-sum');
-        const fnTakehomeSum = document.getElementById('fn-takehome-sum');
-        const fnDateRange = document.getElementById('fn-date-range');
-        const fnDeductNote = document.getElementById('fn-deduct-note');
-        
-        const rtRealHours = document.getElementById('rt-real-hours');
-        const rtPaidHours = document.getElementById('rt-paid-hours');
-        const rtGross = document.getElementById('rt-gross');
-        const rtTax = document.getElementById('rt-tax');
-        const rtSuper = document.getElementById('rt-super');
-
-        const savingsBar = document.getElementById('savings-bar');
-        const savingsPercent = document.getElementById('savings-percent');
-
-        window.toggleOtherInput = function() {
-            const category = document.getElementById('expense-category').value;
-            const otherGroup = document.getElementById('other-desc-group');
-            const otherInput = document.getElementById('expense-other-desc');
-            if (category.includes('อื่นๆ') || category.includes('Others')) {
-                otherGroup.style.display = 'block';
-                otherInput.required = true;
-            } else {
-                otherGroup.style.display = 'none';
-                otherInput.required = false;
-                otherInput.value = '';
-            }
+        function syncExpenseToDrive(date,category,amount,memo){
+            if(SCRIPT_URL!=="YOUR_WEB_APP_URL") fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({type:'expense',date,category,amount,memo})});
         }
 
-        function getFortnightInfo(targetDate = new Date(), offset = 0) {
-            const targetTime = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate()).getTime();
-            const anchorTime = new Date(ANCHOR_THURSDAY.getFullYear(), ANCHOR_THURSDAY.getMonth(), ANCHOR_THURSDAY.getDate()).getTime();
-            
-            const diffDays = Math.floor((targetTime - anchorTime) / (1000 * 60 * 60 * 24)) + (offset * 14);
-            const cycleDays = 14;
-            
-            let remainder = diffDays % cycleDays;
-            if (remainder < 0) remainder += cycleDays;
-
-            const fnStart = new Date(targetTime);
-            fnStart.setDate(fnStart.getDate() - remainder + (offset * 14));
-
-            const fnEnd = new Date(fnStart);
-            fnEnd.setDate(fnEnd.getDate() + 13);
-
-            return { fnStart, fnEnd };
-        }
-
-        window.changeFortnight = function(direction) {
-            fortnightOffset += direction;
-            renderData();
-        }
-
-        window.saveAndSyncUtilities = function() {
-            const currentFn = getFortnightInfo(todayObj, fortnightOffset);
-            const fnKey = currentFn.fnStart.toISOString().split('T')[0];
-
-            const elecVal = Number(document.getElementById('fn-elec-input').value) || 0;
-            const gasVal = Number(document.getElementById('fn-gas-input').value) || 0;
-
-            fnUtilitiesData[fnKey] = { elec: elecVal, gas: gasVal };
-            localStorage.setItem('fnUtilitiesData', JSON.stringify(fnUtilitiesData));
-
-            if (elecVal > 0) {
-                syncExpenseToDrive(currentFn.fnStart.toISOString().split('T')[0], '⚡ ค่าไฟ', elecVal, 'บันทึกจากรอบ Fortnight');
-            }
-            if (gasVal > 0) {
-                syncExpenseToDrive(currentFn.fnStart.toISOString().split('T')[0], '🔥 ค่าแก๊ส', gasVal, 'บันทึกจากรอบ Fortnight');
-            }
-
-            renderData();
-        }
-
-        function syncExpenseToDrive(date, category, amount, memo) {
-            if (SCRIPT_URL !== "YOUR_WEB_APP_URL") {
-                fetch(SCRIPT_URL, { 
-                    method: 'POST', 
-                    mode: 'no-cors', 
-                    headers: { 'Content-Type': 'text/plain' },
-                    redirect: 'follow',
-                    body: JSON.stringify({
-                        type: 'expense',
-                        date: date,
-                        category: category,
-                        amount: amount,
-                        memo: memo
-                    }) 
-                });
-            }
-        }
-
-        function recalculatePayRates() {
-            workData.sort((a, b) => {
-                let timeA = new Date(`${a.date}T${a.start || '00:00'}:00`).getTime();
-                let timeB = new Date(`${b.date}T${b.start || '00:00'}:00`).getTime();
-                return timeA - timeB;
+        function recalculatePayRates(){
+            workData.sort((a,b)=>new Date(`${a.date}T${a.start||'00:00'}:00`)-new Date(`${b.date}T${b.start||'00:00'}:00`));
+            let fnGroups={};
+            workData.forEach(item=>{
+                const fnKey=getFortnightInfo(new Date(item.date+'T00:00:00')).fnStart.toISOString().split('T')[0];
+                if(!fnGroups[fnKey]) fnGroups[fnKey]=[];
+                fnGroups[fnKey].push(item);
             });
-
-            let fortnightGroups = {};
-
-            workData.forEach(item => {
-                const itemDate = new Date(item.date + 'T00:00:00');
-                const fnInfo = getFortnightInfo(itemDate, 0);
-                const fnKey = fnInfo.fnStart.toISOString().split('T')[0];
-
-                if (!fortnightGroups[fnKey]) {
-                    fortnightGroups[fnKey] = [];
-                }
-                fortnightGroups[fnKey].push(item);
-            });
-
-            Object.keys(fortnightGroups).forEach(fnKey => {
-                let accumulatedWeekdayPaidHrs = 0;
-
-                fortnightGroups[fnKey].forEach(item => {
-                    const d = new Date(item.date + 'T00:00:00');
-                    const dayOfWeek = d.getDay();
-
-                    let realHrs = Number(item.realHours);
-                    let paidHrs = realHrs;
-                    let otHrs = 0;
-                    let gross = 0;
-
-                    if (dayOfWeek === 0) {
-                        item.isSunday = true;
-                        item.isSaturday = false;
-                        gross = paidHrs * SUNDAY_RATE;
-                    } else if (dayOfWeek === 6) {
-                        item.isSunday = false;
-                        item.isSaturday = true;
-                        otHrs = paidHrs;
-                        gross = paidHrs * OT_RATE;
-                    } else {
-                        item.isSunday = false;
-                        item.isSaturday = false;
-
-                        let prevAccumulated = accumulatedWeekdayPaidHrs;
-                        accumulatedWeekdayPaidHrs += paidHrs;
-
-                        if (accumulatedWeekdayPaidHrs <= 76) {
-                            gross = paidHrs * BASE_RATE;
-                        } else if (prevAccumulated >= 76) {
-                            otHrs = paidHrs;
-                            gross = paidHrs * OT_RATE;
-                        } else {
-                            let normalHrs = 76 - prevAccumulated;
-                            otHrs = paidHrs - normalHrs;
-                            gross = (normalHrs * BASE_RATE) + (otHrs * OT_RATE);
-                        }
+            Object.keys(fnGroups).forEach(fnKey=>{
+                let accumulated=0;
+                fnGroups[fnKey].forEach(item=>{
+                    const dow=new Date(item.date+'T00:00:00').getDay(), realHrs=Number(item.realHours);
+                    let otHrs=0, gross=0;
+                    if(dow===0){item.isSunday=true;item.isSaturday=false;gross=realHrs*SUNDAY_RATE;}
+                    else if(dow===6){item.isSunday=false;item.isSaturday=true;otHrs=realHrs;gross=realHrs*OT_RATE;}
+                    else{
+                        item.isSunday=false;item.isSaturday=false;
+                        let prev=accumulated; accumulated+=realHrs;
+                        if(accumulated<=76) gross=realHrs*BASE_RATE;
+                        else if(prev>=76){otHrs=realHrs;gross=realHrs*OT_RATE;}
+                        else{let norm=76-prev; otHrs=realHrs-norm; gross=(norm*BASE_RATE)+(otHrs*OT_RATE);}
                     }
-
-                    item.paidHours = paidHrs.toFixed(1);
-                    item.otHours = otHrs.toFixed(1);
-                    item.grossPay = gross;
-                    item.netPay = gross * (1 - TAX_RATE);
-                    item.superPay = gross * SUPER_RATE;
+                    item.paidHours=realHrs.toFixed(1); item.otHours=otHrs.toFixed(1); item.grossPay=gross; item.netPay=gross*(1-TAX_RATE); item.superPay=gross*SUPER_RATE;
                 });
             });
         }
 
-        function renderData() {
+        function renderData(){
             recalculatePayRates();
+            expenseData.sort((a,b)=>new Date(b.date)-new Date(a.date));
+            document.getElementById('current-date-display').innerText=todayObj.toLocaleDateString(currentLang==='th'?'th-TH':'en-US',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
 
-            expenseData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            let tGross=0, tNet=0, tSuper=0, tReal=0, tPaid=0, fnNetTotal=0;
+            const currentFn=getFortnightInfo(todayObj,fortnightOffset), fnKey=currentFn.fnStart.toISOString().split('T')[0];
+            const currentFnUtil=fnUtilitiesData[fnKey]||{elec:0,gas:0};
+            document.getElementById('fn-elec-input').value=currentFnUtil.elec||''; document.getElementById('fn-gas-input').value=currentFnUtil.gas||'';
 
-            let displayWorkData = [...workData].sort((a, b) => {
-                let timeA = new Date(`${a.date}T${a.start || '00:00'}:00`).getTime();
-                let timeB = new Date(`${b.date}T${b.start || '00:00'}:00`).getTime();
-                return timeB - timeA;
+            const activeMonths=currentLang==='th'?['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            document.getElementById('fn-date-range').innerText=`${currentLang==='th'?'รอบวันที่':'Period:'} ${currentFn.fnStart.getDate()} ${activeMonths[currentFn.fnStart.getMonth()]} - ${currentFn.fnEnd.getDate()} ${activeMonths[currentFn.fnEnd.getMonth()]}`;
+
+            const isVisaActive=(currentFn.fnStart.getFullYear()<2026)||(currentFn.fnStart.getFullYear()===2026&&currentFn.fnStart.getMonth()<=11);
+
+            workData.forEach(item=>{
+                tGross+=Number(item.grossPay); tNet+=Number(item.netPay); tSuper+=Number(item.superPay); tReal+=Number(item.realHours); tPaid+=Number(item.paidHours);
+                const id=new Date(item.date+'T00:00:00'); if(id>=currentFn.fnStart&&id<=currentFn.fnEnd) fnNetTotal+=Number(item.netPay);
             });
 
-            const dateOpts = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-            document.getElementById('current-date-display').innerText = todayObj.toLocaleDateString(currentLang === 'th' ? 'th-TH' : 'en-US', dateOpts);
-
-            workHistory.innerHTML = '';
-            let totalGross = 0;
-            let totalNet = 0;
-            let totalSuper = 0;
-            let totalRealHrs = 0;
-            let totalPaidHrs = 0;
-            
-            const currentFn = getFortnightInfo(todayObj, fortnightOffset);
-            const fnKey = currentFn.fnStart.toISOString().split('T')[0];
-            let fnNetTotal = 0;
-
-            const currentFnUtil = fnUtilitiesData[fnKey] || { elec: 0, gas: 0 };
-            document.getElementById('fn-elec-input').value = currentFnUtil.elec || '';
-            document.getElementById('fn-gas-input').value = currentFnUtil.gas || '';
-
-            const thMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-            const enMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const activeMonths = currentLang === 'th' ? thMonths : enMonths;
-
-            const formatDateStr = (d) => `${d.getDate()} ${activeMonths[d.getMonth()]}`;
-            fnDateRange.innerText = `${currentLang === 'th' ? 'รอบวันที่' : 'Period:'} ${formatDateStr(currentFn.fnStart)} - ${formatDateStr(currentFn.fnEnd)}`;
-
-            const fnYear = currentFn.fnStart.getFullYear();
-            const fnMonth = currentFn.fnStart.getMonth(); 
-            const isVisaActive = (fnYear < 2026) || (fnYear === 2026 && fnMonth <= 11);
-
-            workData.forEach((item) => {
-                totalGross += Number(item.grossPay);
-                totalNet += Number(item.netPay);
-                totalSuper += Number(item.superPay || (item.grossPay * SUPER_RATE));
-                totalRealHrs += Number(item.realHours);
-                totalPaidHrs += Number(item.paidHours);
-
-                const itemDateObj = new Date(item.date + 'T00:00:00');
-                if (itemDateObj >= currentFn.fnStart && itemDateObj <= currentFn.fnEnd) {
-                    fnNetTotal += Number(item.netPay);
-                }
+            // ป้องกันบั๊ก Index Shift โดยอ้างอิง Object ตรงๆ
+            const workList=document.getElementById('work-history'); workList.innerHTML='';
+            [...workData].sort((a,b)=>new Date(`${b.date}T${b.start||'00:00'}:00`)-new Date(`${a.date}T${a.start||'00:00'}:00`)).forEach((item)=>{
+                let badge='', cls='';
+                if(item.isSunday){cls='sunday-item';badge=` <b style="color:#d97706">${i18n[currentLang].sun_badge}</b>`;}
+                else if(item.isSaturday){cls='saturday-item';badge=` <b style="color:#2563eb">${i18n[currentLang].sat_badge}</b>`;}
+                
+                const div=document.createElement('div'); div.className=`history-item ${cls}`;
+                div.innerHTML=`<div><strong>${item.date} (${item.start}-${item.end})${badge}</strong><span>${i18n[currentLang].work_hist_hrs.replace('{real}',item.realHours).replace('{paid}',item.paidHours)} ${Number(item.otHours)>0?`(OT: ${item.otHours}h)`:''}</span>${item.memo?`<span class="memo-tag">📝 ${item.memo}</span>`:''}<span style="color:var(--primary);font-weight:500">+${Number(item.netPay).toFixed(2)} AUD</span></div>`;
+                
+                const btn=document.createElement('button'); btn.className='delete-btn'; btn.innerText=i18n[currentLang].delete;
+                btn.onclick=()=>deleteWorkItem(item);
+                div.appendChild(btn); workList.appendChild(div);
             });
 
-            displayWorkData.forEach((item) => {
-                let dayBadge = '';
-                let dayClass = '';
+            document.getElementById('total-net-sum').innerText=`$${tNet.toLocaleString(undefined,{minimumFractionDigits:2})} AUD`;
+            document.getElementById('total-gross-sum').innerText=`${i18n[currentLang].sum_gross_sub}$${tGross.toLocaleString(undefined,{minimumFractionDigits:2})}`;
+            document.getElementById('rt-real-hours').innerText=`${tReal.toFixed(1)} ${currentLang==='th'?'ชม.':'hrs'}`;
+            document.getElementById('rt-paid-hours').innerText=`${tPaid.toFixed(1)} ${currentLang==='th'?'ชม.':'hrs'}`;
+            document.getElementById('rt-gross').innerText=`$${tGross.toFixed(2)}`;
+            document.getElementById('rt-tax').innerText=`$${(tGross*TAX_RATE).toFixed(2)}`;
+            document.getElementById('rt-super').innerText=`$${tSuper.toFixed(2)} AUD`;
 
-                if (item.isSunday) {
-                    dayClass = 'sunday-item';
-                    dayBadge = ` <span style="color:#d97706; font-weight:600;">${i18n[currentLang].sun_badge}</span>`;
-                } else if (item.isSaturday) {
-                    dayClass = 'saturday-item';
-                    dayBadge = ` <span style="color:#2563eb; font-weight:600;">${i18n[currentLang].sat_badge}</span>`;
-                }
+            let fnDeduct=RENT_PER_FN+Number(currentFnUtil.elec)+Number(currentFnUtil.gas)+(isVisaActive?VISA_PER_FN:0);
+            document.getElementById('fn-deduct-note').innerText=isVisaActive?i18n[currentLang].fn_deduct_visa:i18n[currentLang].fn_deduct_novisa;
+            document.getElementById('fn-net-sum').innerText=`$${fnNetTotal.toLocaleString(undefined,{minimumFractionDigits:2})} AUD`;
+            document.getElementById('fn-takehome-sum').innerText=`$${(fnNetTotal-fnDeduct).toLocaleString(undefined,{minimumFractionDigits:2})} AUD`;
 
-                const memoText = item.memo ? `<span class="memo-tag">📝 ${item.memo}</span>` : '';
-                const hrsText = i18n[currentLang].work_hist_hrs.replace('{real}', item.realHours).replace('{paid}', item.paidHours);
-                const netText = i18n[currentLang].work_hist_net.replace('{gross}', Number(item.grossPay).toFixed(2)).replace('{net}', Number(item.netPay).toFixed(2));
-
-                workHistory.innerHTML += `
-                    <div class="history-item ${dayClass}">
-                        <div>
-                            <strong>${item.date} (${item.start} - ${item.end})${dayBadge}</strong>
-                            <span>${hrsText} ${Number(item.otHours) > 0 ? `<b style="color:#2563eb;">(OT: ${item.otHours} hrs)</b>` : ''}</span>
-                            ${memoText}
-                            <span style="color: var(--primary); font-weight: 500; margin-top: 2px;">
-                                ${netText}
-                            </span>
-                        </div>
-                        <button class="delete-btn" onclick="deleteWork('${item.id || ''}', '${item.date}')">${i18n[currentLang].delete}</button>
-                    </div>
-                `;
+            const expList=document.getElementById('expense-history'); expList.innerHTML=''; let tExp=0;
+            expenseData.forEach((item,idx)=>{
+                tExp+=Number(item.amount);
+                const div=document.createElement('div'); div.className='history-item expense-item';
+                div.innerHTML=`<div><strong>${item.date} - ${item.category}</strong>${item.memo?`<span class="memo-tag">📝 ${item.memo}</span>`:''}<span style="color:var(--success);font-weight:500">-${Number(item.amount).toFixed(2)} AUD</span></div>`;
+                const btn=document.createElement('button'); btn.className='delete-btn'; btn.innerText=i18n[currentLang].delete;
+                btn.onclick=()=>deleteExpenseItem(idx);
+                div.appendChild(btn); expList.appendChild(div);
             });
+            document.getElementById('total-expense-sum').innerText=`$${tExp.toLocaleString(undefined,{minimumFractionDigits:2})} AUD`;
 
-            totalNetSum.innerText = `$${totalNet.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} AUD`;
-            totalGrossSum.innerText = `${i18n[currentLang].sum_gross_sub}$${totalGross.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            
-            rtRealHours.innerText = `${totalRealHrs.toFixed(1)} ${currentLang === 'th' ? 'ชม.' : 'hrs'}`;
-            rtPaidHours.innerText = `${totalPaidHrs.toFixed(1)} ${currentLang === 'th' ? 'ชม.' : 'hrs'}`;
-            rtGross.innerText = `$${totalGross.toFixed(2)} AUD`;
-            rtTax.innerText = `$${(totalGross * TAX_RATE).toFixed(2)} AUD`;
-            rtSuper.innerText = `$${totalSuper.toFixed(2)} AUD`;
-
-            let fnUtilities = Number(currentFnUtil.elec) + Number(currentFnUtil.gas);
-
-            let totalDeduction = RENT_PER_FORTNIGHT + fnUtilities;
-            if (isVisaActive) {
-                totalDeduction += VISA_PER_FORTNIGHT;
-                fnDeductNote.innerText = i18n[currentLang].fn_deduct_visa;
-            } else {
-                fnDeductNote.innerText = i18n[currentLang].fn_deduct_novisa;
-            }
-
-            let fnTakeHome = fnNetTotal - totalDeduction;
-            fnNetSum.innerText = `$${fnNetTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} AUD`;
-            fnTakehomeSum.innerText = `$${fnTakeHome.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} AUD`;
-
-            expenseHistory.innerHTML = '';
-            let totalExpense = 0;
-
-            expenseData.forEach((item, index) => {
-                totalExpense += Number(item.amount);
-                const payText = i18n[currentLang].exp_hist_pay.replace('{amt}', Number(item.amount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
-                const expMemoText = item.memo ? `<span class="memo-tag">📝 ${item.memo}</span>` : '';
-
-                expenseHistory.innerHTML += `
-                    <div class="history-item expense-item">
-                        <div>
-                            <strong>${item.date} - ${item.category}</strong>
-                            ${expMemoText}
-                            <span style="color: #059669; font-weight: 500; margin-top: 2px;">${payText}</span>
-                        </div>
-                        <button class="delete-btn" onclick="deleteExpense('${item.id || ''}', ${index})">${i18n[currentLang].delete}</button>
-                    </div>
-                `;
-            });
-            totalExpenseSum.innerText = `$${totalExpense.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} AUD`;
-
-            let netAvailable = totalNet - totalExpense;
-            let ratio = totalNet > 0 ? Math.max(0, Math.min(100, (netAvailable / totalNet) * 100)) : 0;
-            savingsBar.style.width = `${ratio.toFixed(0)}%`;
-            savingsPercent.innerText = `${ratio.toFixed(0)}% ${i18n[currentLang].savings_sub}`;
-
+            let ratio=tNet>0?Math.max(0,Math.min(100,((tNet-tExp)/tNet)*100)):0;
+            document.getElementById('savings-bar').style.width=`${ratio.toFixed(0)}%`;
+            document.getElementById('savings-percent').innerText=`${ratio.toFixed(0)}% ${i18n[currentLang].savings_sub}`;
             renderCharts();
         }
 
-        function renderCharts() {
-            const selectedYear = document.getElementById('year-select').value;
-            const expenseScope = document.getElementById('expense-scope-select').value;
+        function renderCharts(){
+            const yr=document.getElementById('year-select').value, scope=document.getElementById('expense-scope-select').value;
+            const mIncome=new Array(12).fill(0), mExpense=new Array(12).fill(0);
 
-            const monthlyIncome = new Array(12).fill(0);
-            const monthlyExpense = new Array(12).fill(0);
+            workData.forEach(i=>{const d=new Date(i.date+'T00:00:00');if(d.getFullYear().toString()===yr)mIncome[d.getMonth()]+=Number(i.netPay)});
+            expenseData.forEach(i=>{const d=new Date(i.date+'T00:00:00');if(d.getFullYear().toString()===yr)mExpense[d.getMonth()]+=Number(i.amount)});
 
-            workData.forEach(item => {
-                const d = new Date(item.date + 'T00:00:00');
-                if (d.getFullYear().toString() === selectedYear) {
-                    monthlyIncome[d.getMonth()] += Number(item.netPay);
+            const labels=currentLang==='th'?['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+            if(barChartInstance) barChartInstance.destroy();
+            barChartInstance=new Chart(document.getElementById('monthlyBarChart').getContext('2d'),{
+                type:'bar',data:{labels,datasets:[{label:i18n[currentLang].chart_net_income,data:mIncome,backgroundColor:'#4f46e5',borderRadius:4},{label:i18n[currentLang].chart_expense,data:mExpense,backgroundColor:'#10b981',borderRadius:4}]},
+                options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true}}}
+            });
+
+            const cats={[i18n[currentLang].cat_food]:0,[i18n[currentLang].cat_fuel]:0,[i18n[currentLang].cat_groceries]:0,[i18n[currentLang].cat_electricity]:0,[i18n[currentLang].cat_gas]:0,[i18n[currentLang].cat_other]:0};
+            const curMonth=todayObj.getFullYear()+'-'+String(todayObj.getMonth()+1).padStart(2,'0');
+
+            expenseData.forEach(i=>{
+                if(scope==='all_time'||i.date.substring(0,7)===curMonth){
+                    let k=i18n[currentLang].cat_other;
+                    if(i.category.includes('อาหาร')||i.category.includes('Food')) k=i18n[currentLang].cat_food;
+                    else if(i.category.includes('น้ำมัน')||i.category.includes('Fuel')) k=i18n[currentLang].cat_fuel;
+                    else if(i.category.includes('ซื้อของ')||i.category.includes('Shopping')) k=i18n[currentLang].cat_groceries;
+                    else if(i.category.includes('ค่าไฟ')||i.category.includes('Electricity')) k=i18n[currentLang].cat_electricity;
+                    else if(i.category.includes('ค่าแก๊ส')||i.category.includes('Gas')) k=i18n[currentLang].cat_gas;
+                    cats[k]+=Number(i.amount);
                 }
             });
 
-            expenseData.forEach(item => {
-                const d = new Date(item.date + 'T00:00:00');
-                if (d.getFullYear().toString() === selectedYear) {
-                    monthlyExpense[d.getMonth()] += Number(item.amount);
-                }
-            });
-
-            const monthsLabel = currentLang === 'th' 
-                ? ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
-                : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-            if (barChartInstance) barChartInstance.destroy();
-            const ctxBar = document.getElementById('monthlyBarChart').getContext('2d');
-            barChartInstance = new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: monthsLabel,
-                    datasets: [
-                        {
-                            label: i18n[currentLang].chart_net_income,
-                            data: monthlyIncome,
-                            backgroundColor: '#4f46e5',
-                            borderRadius: 4
-                        },
-                        {
-                            label: i18n[currentLang].chart_expense,
-                            data: monthlyExpense,
-                            backgroundColor: '#10b981',
-                            borderRadius: 4
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
-
-            const categoryTotals = {};
-            categoryTotals[i18n[currentLang].cat_food] = 0;
-            categoryTotals[i18n[currentLang].cat_fuel] = 0;
-            categoryTotals[i18n[currentLang].cat_groceries] = 0;
-            categoryTotals[i18n[currentLang].cat_electricity] = 0;
-            categoryTotals[i18n[currentLang].cat_gas] = 0;
-            categoryTotals[i18n[currentLang].cat_other] = 0;
-
-            const currentMonthKey = todayObj.getFullYear() + '-' + String(todayObj.getMonth() + 1).padStart(2, '0');
-
-            expenseData.forEach(item => {
-                const itemMonthKey = item.date.substring(0, 7);
-                if (expenseScope === 'all_time' || itemMonthKey === currentMonthKey) {
-                    let catKey = i18n[currentLang].cat_other;
-                    if (item.category.includes('อาหาร') || item.category.includes('Food')) catKey = i18n[currentLang].cat_food;
-                    else if (item.category.includes('น้ำมัน') || item.category.includes('Fuel')) catKey = i18n[currentLang].cat_fuel;
-                    else if (item.category.includes('ซื้อของ') || item.category.includes('Shopping')) catKey = i18n[currentLang].cat_groceries;
-                    else if (item.category.includes('ค่าไฟ') || item.category.includes('Electricity')) catKey = i18n[currentLang].cat_electricity;
-                    else if (item.category.includes('ค่าแก๊ส') || item.category.includes('Gas')) catKey = i18n[currentLang].cat_gas;
-
-                    categoryTotals[catKey] += Number(item.amount);
-                }
-            });
-
-            if (pieChartInstance) pieChartInstance.destroy();
-            const ctxPie = document.getElementById('expensePieChart').getContext('2d');
-            pieChartInstance = new Chart(ctxPie, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(categoryTotals),
-                    datasets: [{
-                        data: Object.values(categoryTotals),
-                        backgroundColor: ['#f59e0b', '#ef4444', '#06b6d4', '#eab308', '#f97316', '#8b5cf6']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right' } }
-                }
+            if(pieChartInstance) pieChartInstance.destroy();
+            pieChartInstance=new Chart(document.getElementById('expensePieChart').getContext('2d'),{
+                type:'doughnut',data:{labels:Object.keys(cats),datasets:[{data:Object.values(cats),backgroundColor:['#f59e0b','#ef4444','#06b6d4','#eab308','#f97316','#8b5cf6']}]},
+                options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right'}}}
             });
         }
 
-        // ==========================================
-        // 1. ฟังก์ชันดึงข้อมูลจาก Google Sheets (Cloud)
-        // ==========================================
-        async function loadDataFromDrive() {
-            if (!SCRIPT_URL || SCRIPT_URL === "YOUR_WEB_APP_URL") return;
-            
-            try {
-                const response = await fetch(SCRIPT_URL);
-                const data = await response.json();
-                
-                if (data && (data.work || data.expense)) {
-                    workData = data.work || [];
-                    expenseData = data.expense || [];
-                    
-                    localStorage.setItem('workData', JSON.stringify(workData));
-                    localStorage.setItem('expenseData', JSON.stringify(expenseData));
-                    
-                    renderData();
-                }
-            } catch (error) {
-                console.log("Offline mode: ดึงข้อมูลจาก LocalStorage แทน");
-            }
-        }
-
-        // ==========================================
-        // 2. ฟังก์ชันบันทึกเวลาทำงาน
-        // ==========================================
-        workForm.addEventListener('submit', async (e) => {
+        document.getElementById('work-form').addEventListener('submit',e=>{
             e.preventDefault();
-            const dateStr = document.getElementById('work-date').value;
-            const start = document.getElementById('work-start').value;
-            const end = document.getElementById('work-end').value;
-            const memo = document.getElementById('work-memo').value;
+            const d=document.getElementById('work-date').value, s=document.getElementById('work-start').value, en=document.getElementById('work-end').value, m=document.getElementById('work-memo').value;
+            const [sh,sm]=s.split(':').map(Number), [eh,em]=en.split(':').map(Number);
+            let diff=(eh+em/60)-(sh+sm/60); if(diff<0)diff+=24;
+            let realHrs=diff>=5?diff-0.5:diff; realHrs=Math.max(0,realHrs);
 
-            const [startHour, startMin] = start.split(':').map(Number);
-            const [endHour, endMin] = end.split(':').map(Number);
-            
-            let startTime = startHour + startMin / 60;
-            let endTime = endHour + endMin / 60;
-            
-            let diff = endTime - startTime;
-            if (diff < 0) diff += 24; 
+            const item={type:'work',date:d,start:s,end:en,realHours:realHrs.toFixed(1),paidHours:realHrs.toFixed(1),otHours:"0.0",grossPay:0,netPay:0,superPay:0,memo:m};
+            workData.push(item); recalculatePayRates(); localStorage.setItem('workData',JSON.stringify(workData));
 
-            let realHours = diff;
-            if (realHours >= 5) realHours -= 0.5;
-            realHours = Math.max(0, realHours);
-
-            const newWork = { 
-                id: new Date().getTime().toString(),
-                type: 'work',
-                date: dateStr, 
-                start, 
-                end, 
-                realHours: realHours.toFixed(1), 
-                paidHours: realHours.toFixed(1), 
-                otHours: "0.0", 
-                grossPay: 0,
-                netPay: 0,
-                superPay: 0,
-                memo
-            };
-
-            workData.push(newWork);
-            recalculatePayRates();
-            
-            const savedItem = workData.find(item => item.id === newWork.id) || newWork;
-
-            if (SCRIPT_URL !== "YOUR_WEB_APP_URL") {
-                await fetch(SCRIPT_URL, { 
-                    method: 'POST', 
-                    mode: 'no-cors', 
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(savedItem) 
-                });
-            }
-
-            document.getElementById('work-start').value = '';
-            document.getElementById('work-end').value = '';
-            document.getElementById('work-memo').value = '';
-            
-            await loadDataFromDrive();
-            alert(currentLang === 'th' ? '✅ บันทึกและซิงค์ข้อมูลสำเร็จ!' : '✅ Saved successfully!');
+            if(SCRIPT_URL!=="YOUR_WEB_APP_URL") fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(item)});
+            document.getElementById('work-start').value=''; document.getElementById('work-end').value=''; document.getElementById('work-memo').value='';
+            renderData(); alert(currentLang==='th'?'✅ บันทึกสำเร็จ!':'✅ Saved!');
         });
 
-        // ==========================================
-        // 3. ฟังก์ชันบันทึกรายจ่าย
-        // ==========================================
-        expenseForm.addEventListener('submit', async (e) => {
+        document.getElementById('expense-form').addEventListener('submit',e=>{
             e.preventDefault();
-            const date = document.getElementById('expense-date').value;
-            const categorySelect = document.getElementById('expense-category').value;
-            const otherDesc = document.getElementById('expense-other-desc').value;
-            const amount = document.getElementById('expense-amount').value;
-            const memo = document.getElementById('expense-memo').value;
+            const d=document.getElementById('expense-date').value, cSelect=document.getElementById('expense-category').value, oDesc=document.getElementById('expense-other-desc').value, a=document.getElementById('expense-amount').value, m=document.getElementById('expense-memo').value;
+            let c=(cSelect.includes('อื่นๆ')||cSelect.includes('Others'))&&oDesc.trim()?`${cSelect} (${oDesc.trim()})`:cSelect;
+            const item={type:'expense',date:d,category:c,amount:a,memo:m};
+            expenseData.push(item); localStorage.setItem('expenseData',JSON.stringify(expenseData));
 
-            let category = categorySelect;
-            if ((categorySelect.includes('อื่นๆ') || categorySelect.includes('Others')) && otherDesc.trim() !== '') {
-                category = `${categorySelect} (${otherDesc.trim()})`;
-            }
-
-            const newExpense = { 
-                id: new Date().getTime().toString(),
-                type: 'expense',
-                date, 
-                category, 
-                amount,
-                memo
-            };
-
-            expenseData.push(newExpense);
-
-            if (SCRIPT_URL !== "YOUR_WEB_APP_URL") {
-                await fetch(SCRIPT_URL, { 
-                    method: 'POST', 
-                    mode: 'no-cors', 
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(newExpense) 
-                });
-            }
-
-            document.getElementById('expense-amount').value = '';
-            document.getElementById('expense-other-desc').value = '';
-            document.getElementById('expense-memo').value = '';
-            document.getElementById('other-desc-group').style.display = 'none';
-            
-            await loadDataFromDrive();
-            alert(currentLang === 'th' ? '✅ บันทึกรายจ่ายสำเร็จ!' : '✅ Expense saved successfully!');
+            if(SCRIPT_URL!=="YOUR_WEB_APP_URL") fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(item)});
+            document.getElementById('expense-amount').value=''; document.getElementById('expense-other-desc').value=''; document.getElementById('expense-memo').value=''; document.getElementById('other-desc-group').style.display='none';
+            renderData(); alert(currentLang==='th'?'✅ บันทึกรายจ่ายสำเร็จ!':'✅ Expense saved!');
         });
 
-        // ==========================================
-        // 4. ฟังก์ชันลบรายการและซิงค์กลับทันที
-        // ==========================================
-        window.deleteWork = async function(id, date) {
-            if (confirm(currentLang === 'th' ? 'ต้องการลบรายการนี้ และลบข้อมูลออกจาก Google Sheets ใช่หรือไม่?' : 'Delete this item from Google Sheets?')) {
-                if (SCRIPT_URL !== "YOUR_WEB_APP_URL") {
-                    await fetch(SCRIPT_URL, { 
-                        method: 'POST', 
-                        mode: 'no-cors', 
-                        headers: { 'Content-Type': 'text/plain' },
-                        body: JSON.stringify({
-                            action: 'delete',
-                            type: 'work',
-                            id: id,
-                            date: date
-                        }) 
-                    });
-                }
-
-                await loadDataFromDrive();
+        function deleteWorkItem(item){
+            if(confirm(currentLang==='th'?'ต้องการลบรายการนี้ และลบข้อมูลใน Sheets ด้วย?':'Delete this item and from Sheets?')){
+                if(SCRIPT_URL!=="YOUR_WEB_APP_URL") fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'delete',type:'work',date:item.date,start:item.start,end:item.end})});
+                const idx=workData.indexOf(item); if(idx>-1) workData.splice(idx,1);
+                recalculatePayRates(); localStorage.setItem('workData',JSON.stringify(workData)); renderData();
             }
         }
 
-        window.deleteExpense = async function(id, index) {
-            const item = expenseData[index];
-            if (confirm(currentLang === 'th' ? 'ต้องการลบรายการนี้ และลบข้อมูลออกจาก Google Sheets ใช่หรือไม่?' : 'Delete this item from Google Sheets?')) {
-                if (SCRIPT_URL !== "YOUR_WEB_APP_URL") {
-                    await fetch(SCRIPT_URL, { 
-                        method: 'POST', 
-                        mode: 'no-cors', 
-                        headers: { 'Content-Type': 'text/plain' },
-                        body: JSON.stringify({
-                            action: 'delete',
-                            type: 'expense',
-                            id: id,
-                            date: item ? item.date : ''
-                        }) 
-                    });
-                }
-
-                await loadDataFromDrive();
+        function deleteExpenseItem(idx){
+            const item=expenseData[idx];
+            if(confirm(currentLang==='th'?'ต้องการลบรายการนี้ และลบข้อมูลใน Sheets ด้วย?':'Delete this item and from Sheets?')){
+                if(SCRIPT_URL!=="YOUR_WEB_APP_URL") fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'delete',type:'expense',date:item.date,category:item.category,amount:item.amount})});
+                expenseData.splice(idx,1); localStorage.setItem('expenseData',JSON.stringify(expenseData)); renderData();
             }
-        }
-
-        // โหลดข้อมูลอัตโนมัติเมื่อเปิดแอป
-        window.addEventListener('load', () => {
-            loadDataFromDrive();
-        });
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js');
-            });
         }
 
         updateUI();
+        if('serviceWorker'in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
     </script>
 </body>
 </html>
