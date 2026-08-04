@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Work & Expense Tracker</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- Chart.js สำหรับวาดกราฟ -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -59,7 +58,6 @@
             margin-top: 4px;
         }
 
-        /* ปุ่มสลับภาษา */
         .lang-switch-box {
             display: flex;
             justify-content: flex-end;
@@ -113,7 +111,6 @@
             opacity: 0.9;
         }
 
-        /* Summary Cards */
         .summary-box {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -154,7 +151,6 @@
             margin-top: 2px;
         }
 
-        /* Realtime Summary Card */
         .realtime-summary {
             background: #ffffff;
             border: 1px solid var(--border-color);
@@ -198,7 +194,6 @@
             color: var(--super-color);
         }
 
-        /* Fortnight Card */
         .fortnight-card {
             background: linear-gradient(135deg, #0ea5e9, #2563eb);
             color: white;
@@ -301,7 +296,6 @@
             color: #1e293b;
         }
 
-        /* Savings Goal Progress Bar */
         .savings-card {
             background: #ffffff;
             border: 1px solid var(--border-color);
@@ -332,7 +326,6 @@
             transition: width 0.3s ease;
         }
 
-        /* Chart Section */
         .chart-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -510,7 +503,6 @@
 <body>
 
     <div class="container">
-        <!-- ปุ่มสลับภาษา -->
         <div class="lang-switch-box">
             <button class="lang-btn" onclick="toggleLanguage()" id="lang-btn">🇬🇧 English</button>
         </div>
@@ -520,7 +512,6 @@
             <p id="current-date-display"></p>
         </header>
 
-        <!-- กล่องสรุปรายรับเรียลไทม์ + Superannuation -->
         <div class="realtime-summary">
             <h3 data-i18n="rt_title">📊 สรุปรายละเอียดรายรับรวม (เรียลไทม์)</h3>
             <div class="rt-grid">
@@ -534,7 +525,6 @@
             </div>
         </div>
 
-        <!-- เทมเพลตรอบจ่าย Fortnight + ช่องกรอกค่าไฟ/แก๊ส Manual -->
         <div class="fortnight-card">
             <div class="fortnight-header">
                 <button class="fn-nav-btn" onclick="changeFortnight(-1)" data-i18n="fn_prev">◀ รอบก่อน</button>
@@ -555,7 +545,6 @@
                 </div>
             </div>
 
-            <!-- ช่องพิมพ์ระบุค่าไฟ/ค่าแก๊ส Manual ประจำรอบ -->
             <div class="fn-inputs">
                 <div class="fn-input-group">
                     <label data-i18n="label_elec">⚡ ค่าไฟรอบนี้ ($)</label>
@@ -568,7 +557,6 @@
             </div>
         </div>
 
-        <!-- กล่องสัดส่วนเงินเก็บคงเหลือ (Savings Ratio) -->
         <div class="savings-card">
             <div class="savings-header">
                 <span data-i18n="savings_title">💡 สัดส่วนเงินคงเหลือเก็บสะสม</span>
@@ -579,7 +567,6 @@
             </div>
         </div>
 
-        <!-- ฟอร์มบันทึกชั่วโมงทำงาน + Memo -->
         <div class="card">
             <h2 data-i18n="work_form_title">⏱️ บันทึกเวลาเข้า-ออกงาน (เรท $29.44 / เสาร์ 1.5× / อาทิตย์ 2× / เกิน 76 ชม. คิด OT 1.5×)</h2>
             <form id="work-form">
@@ -606,7 +593,6 @@
             <div class="history-list" id="work-history"></div>
         </div>
 
-        <!-- ฟอร์มบันทึกรายจ่ายประจำวัน + Memo -->
         <div class="card">
             <h2 data-i18n="expense_form_title">💸 บันทึกรายจ่ายประจำวัน (AUD)</h2>
             <form id="expense-form">
@@ -644,7 +630,6 @@
             <div class="history-list" id="expense-history"></div>
         </div>
 
-        <!-- Section กราฟรายรับ-รายจ่าย รายเดือน (3 ปี) -->
         <div class="chart-card">
             <div class="chart-header">
                 <h2 data-i18n="chart_bar_title">📈 เปรียบเทียบ รายรับ - รายจ่าย รายเดือน</h2>
@@ -659,7 +644,6 @@
             </div>
         </div>
 
-        <!-- Section กราฟวงกลม สัดส่วนรายจ่าย -->
         <div class="chart-card">
             <div class="chart-header">
                 <h2 data-i18n="chart_pie_title">🍩 สัดส่วนรายจ่ายตามหมวดหมู่</h2>
@@ -673,13 +657,11 @@
             </div>
         </div>
 
-        <!-- ปุ่ม Google Sheets & พิมพ์ PDF -->
         <div class="backup-box">
             <a href="https://sheets.google.com" target="_blank" class="backup-btn drive" data-i18n="btn_drive">☁️ เปิด Google Sheets</a>
             <button class="backup-btn pdf-btn" onclick="window.print()" data-i18n="btn_pdf">📄 พิมพ์ / เซฟ PDF</button>
         </div>
 
-        <!-- กล่องสรุปยอดรวมภาพรวม -->
         <div class="summary-box">
             <div class="summary-card">
                 <h3 data-i18n="sum_net_title">รายรับสุทธิ (รวมทั้งหมด)</h3>
@@ -710,7 +692,6 @@
 
         let currentLang = localStorage.getItem('appLang') || 'th';
 
-        // ข้อความ 2 ภาษา (i18n)
         const i18n = {
             th: {
                 title: "บันทึกงานและรายจ่าย",
@@ -956,7 +937,6 @@
         }
 
         function recalculatePayRates() {
-            // จัดเรียงข้อมูลการทำงานตามลำดับเวลาเก่าไปใหม่เพื่อคิดเรทสะสม
             workData.sort((a, b) => {
                 let timeA = new Date(`${a.date}T${a.start || '00:00'}:00`).getTime();
                 let timeB = new Date(`${b.date}T${b.start || '00:00'}:00`).getTime();
@@ -1028,10 +1008,8 @@
         function renderData() {
             recalculatePayRates();
 
-            // จัดเรียงข้อมูลรายจ่ายตามวันที่ล่าสุดไปหาเก่าที่สุด
             expenseData.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-            // จัดเรียงข้อมูลงานที่จะแสดงผลในลิสต์ตามวันที่และเวลาล่าสุดไปหาเก่าที่สุด (Newest First)
             let displayWorkData = [...workData].sort((a, b) => {
                 let timeA = new Date(`${a.date}T${a.start || '00:00'}:00`).getTime();
                 let timeB = new Date(`${b.date}T${b.start || '00:00'}:00`).getTime();
@@ -1067,7 +1045,6 @@
             const fnMonth = currentFn.fnStart.getMonth(); 
             const isVisaActive = (fnYear < 2026) || (fnYear === 2026 && fnMonth <= 11);
 
-            // วนลูปคำนวณยอดรวมทั้งหมด
             workData.forEach((item) => {
                 totalGross += Number(item.grossPay);
                 totalNet += Number(item.netPay);
@@ -1081,9 +1058,7 @@
                 }
             });
 
-            // แสดงรายการประวัติงานแบบเรียงลำดับล่าสุดขึ้นก่อน
             displayWorkData.forEach((item) => {
-                // ค้นหา Index ที่แท้จริงใน Array หลักสำหรับปุ่มลบ
                 const originalIndex = workData.indexOf(item);
 
                 let dayBadge = '';
@@ -1142,7 +1117,6 @@
             expenseHistory.innerHTML = '';
             let totalExpense = 0;
 
-            // แสดงรายการประวัติรายจ่ายแบบเรียงลำดับวันที่ล่าสุดขึ้นก่อน
             expenseData.forEach((item, index) => {
                 totalExpense += Number(item.amount);
                 const payText = i18n[currentLang].exp_hist_pay.replace('{amt}', Number(item.amount).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}));
@@ -1377,17 +1351,60 @@
             alert(currentLang === 'th' ? '✅ บันทึกรายจ่ายสำเร็จ!' : '✅ Expense saved successfully!');
         });
 
+        // ฟังก์ชันลบรายการและสั่งยิงคำสั่งสั่งลบไปที่ Google Sheets
         window.deleteWork = function(index) {
-            workData.splice(index, 1);
-            recalculatePayRates();
-            localStorage.setItem('workData', JSON.stringify(workData));
-            renderData();
+            const itemToDelete = workData[index];
+
+            if (confirm(currentLang === 'th' ? 'ต้องการลบรายการนี้ และลบข้อมูลออกจาก Google Sheets ด้วยใช่หรือไม่?' : 'Delete this item and remove from Google Sheets?')) {
+                // ยิงคำสั่งลบไปที่ Apps Script
+                if (SCRIPT_URL !== "YOUR_WEB_APP_URL") {
+                    fetch(SCRIPT_URL, { 
+                        method: 'POST', 
+                        mode: 'no-cors', 
+                        headers: { 'Content-Type': 'text/plain' },
+                        redirect: 'follow',
+                        body: JSON.stringify({
+                            action: 'delete',
+                            type: 'work',
+                            date: itemToDelete.date,
+                            start: itemToDelete.start,
+                            end: itemToDelete.end
+                        }) 
+                    });
+                }
+
+                workData.splice(index, 1);
+                recalculatePayRates();
+                localStorage.setItem('workData', JSON.stringify(workData));
+                renderData();
+            }
         }
 
         window.deleteExpense = function(index) {
-            expenseData.splice(index, 1);
-            localStorage.setItem('expenseData', JSON.stringify(expenseData));
-            renderData();
+            const itemToDelete = expenseData[index];
+
+            if (confirm(currentLang === 'th' ? 'ต้องการลบรายการนี้ และลบข้อมูลออกจาก Google Sheets ด้วยใช่หรือไม่?' : 'Delete this item and remove from Google Sheets?')) {
+                // ยิงคำสั่งลบไปที่ Apps Script
+                if (SCRIPT_URL !== "YOUR_WEB_APP_URL") {
+                    fetch(SCRIPT_URL, { 
+                        method: 'POST', 
+                        mode: 'no-cors', 
+                        headers: { 'Content-Type': 'text/plain' },
+                        redirect: 'follow',
+                        body: JSON.stringify({
+                            action: 'delete',
+                            type: 'expense',
+                            date: itemToDelete.date,
+                            category: itemToDelete.category,
+                            amount: itemToDelete.amount
+                        }) 
+                    });
+                }
+
+                expenseData.splice(index, 1);
+                localStorage.setItem('expenseData', JSON.stringify(expenseData));
+                renderData();
+            }
         }
 
         updateUI();
