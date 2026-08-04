@@ -1447,6 +1447,91 @@
         }
 
         updateUI();
+        // ==========================================
+        // 1. ฟังก์ชันดึงข้อมูลล่าสุดจาก Google Sheets (Cloud)
+        // ==========================================
+        async function loadDataFromDrive() {
+            if (!SCRIPT_URL || SCRIPT_URL === "YOUR_WEB_APP_URL") return;
+            
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                
+                if (data && (data.work || data.expense)) {
+                    workData = data.work || [];
+                    expenseData = data.expense || [];
+                    
+                    // บันทึกสำรองไว้ใน LocalStorage ของเครื่องด้วย
+                    localStorage.setItem('workData', JSON.stringify(workData));
+                    localStorage.setItem('expenseData', JSON.stringify(expenseData));
+                    
+                    renderData();
+                }
+            } catch (error) {
+                console.log("Offline mode: ดึงข้อมูลจาก LocalStorage แทน");
+            }
+        }
+
+        // ==========================================
+        // 2. ฟังก์ชันบันทึกงาน (สั่งซิงค์ข้อมูลกลับทันทีหลังบันทึก)
+        // ==========================================
+        async function saveWork() {
+            // ... (โค้ดคำนวณและเตรียม payload เดิมของคุณ) ...
+            
+            // ตัวอย่างช่วงส่งข้อมูลไป Apps Script:
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                // 💡 จุดสำคัญ: สั่งดึงข้อมูลล่าสุดจาก Cloud กลับมาโชว์ทันที
+                await loadDataFromDrive();
+            } catch (err) {
+                console.error("Save error:", err);
+            }
+        }
+
+        // ==========================================
+        // 3. ฟังก์ชันลบงาน (สั่งซิงค์ข้อมูลกลับทันทีหลังลบ)
+        // ==========================================
+        async function deleteWork(id) {
+            const item = workData.find(w => w.id === id);
+            if (!item) return;
+
+            // ลบในเครื่องก่อนเพื่อความรวดเร็ว
+            workData = workData.filter(w => w.id !== id);
+            renderData();
+
+            // ส่งคำสั่งลบไปที่ Google Apps Script
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        type: 'work',
+                        id: id,
+                        date: item.date
+                    })
+                });
+
+                // 💡 จุดสำคัญ: สั่งดึงข้อมูลล่าสุดจาก Cloud กลับมาอัปเดตหน้าจอทันที
+                await loadDataFromDrive();
+            } catch (err) {
+                console.error("Delete error:", err);
+            }
+        }
+
+        // ==========================================
+        // 4. โหลดข้อมูลอัตโนมัติทันทีเมื่อเปิดแอปขึ้นมา
+        // ==========================================
+        window.addEventListener('load', () => {
+            loadDataFromDrive();
+        });
     </script>
 </body>
 </html>
