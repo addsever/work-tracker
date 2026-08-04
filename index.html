@@ -5,165 +5,539 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Work & Expense Tracker</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4f46e5">
+    <meta name="theme-color" content="#6366f1">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2910/2910756.png">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root{--primary:#4f46e5;--primary-hover:#4338ca;--bg:#f8fafc;--card:#fff;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--success:#10b981;--sun:#f59e0b;--super:#8b5cf6}
-        *{box-sizing:border-box;margin:0;padding:0;font-family:'Prompt',sans-serif}
-        body{background:var(--bg);color:var(--text);padding:16px;display:flex;justify-content:center}
-        .container{width:100%;max-width:600px}
-        header{text-align:center;margin-bottom:16px}
-        header h1{font-size:1.4rem;color:var(--primary);font-weight:600}
-        header p{color:var(--muted);font-size:.85rem}
-        .lang-switch{display:flex;justify-content:flex-end;margin-bottom:8px}
-        .lang-btn{background:#e2e8f0;border:1px solid var(--border);padding:4px 12px;border-radius:20px;cursor:pointer;font-size:.8rem;font-weight:500}
-        .card{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 2px 4px rgba(0,0,0,.05);margin-bottom:16px;border:1px solid var(--border)}
-        .card h2,.card h3{font-size:1rem;margin-bottom:12px;color:var(--primary);font-weight:600}
-        .rt-grid,.fn-grid,.form-row,.summary-box,.backup-box,.fn-inputs{display:grid;gap:8px}
-        .rt-grid,.fn-grid,.form-row,.summary-box,.backup-box,.fn-inputs{grid-template-columns:1fr 1fr}
-        .rt-item,.fn-box{background:#f8fafc;padding:8px 10px;border-radius:8px;font-size:.8rem;color:var(--muted)}
-        .rt-item b,.fn-box p{color:var(--text);font-weight:600}
-        .super-item{background:#f3e8ff;border-left:3px solid var(--super);grid-column:span 2}
-        .fortnight-card{background:linear-gradient(135deg,#0ea5e9,#2563eb);color:#fff;border-radius:14px;padding:16px;margin-bottom:16px}
-        .fortnight-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-        .fn-nav-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:2px 8px;border-radius:6px;cursor:pointer;font-size:.75rem}
-        #fn-date-range{text-align:center;font-size:.8rem;background:rgba(0,0,0,.1);padding:4px;border-radius:6px;margin-bottom:8px}
-        .fn-box{background:rgba(255,255,255,.15);color:#fff;text-align:center}
-        .fn-box p{color:#fff;font-size:1rem}
-        .fn-inputs{background:rgba(255,255,255,.1);padding:8px;border-radius:8px;margin-top:8px}
-        .fn-inputs label{color:rgba(255,255,255,.9);font-size:.7rem}
-        .fn-inputs input{padding:4px 8px;font-size:.8rem;border-radius:4px;border:none}
-        .progress-bar-bg{background:#e2e8f0;border-radius:8px;height:10px;overflow:hidden;margin-top:6px}
-        .progress-bar-fill{background:linear-gradient(90deg,#10b981,#059669);height:100%;width:0%;transition:width .3s}
-        .form-group{margin-bottom:10px}
-        label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px}
-        input,select{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:.9rem;outline:none}
-        button[type="submit"]{width:100%;background:var(--primary);color:#fff;border:none;padding:10px;border-radius:6px;font-size:.9rem;font-weight:500;cursor:pointer}
-        .history-list{margin-top:12px;max-height:250px;overflow-y:auto}
-        .history-item{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#f8fafc;border-radius:6px;margin-bottom:6px;font-size:.85rem;border-left:4px solid var(--primary)}
-        .history-item.sunday-item{border-left-color:var(--sun);background:#fffbeb}
-        .history-item.saturday-item{border-left-color:#3b82f6;background:#eff6ff}
-        .history-item.expense-item{border-left-color:var(--success)}
-        .history-item span{display:block;font-size:.75rem;color:var(--muted)}
-        .delete-btn{background:none;border:none;color:#ef4444;cursor:pointer;font-size:.8rem;padding:2px 6px}
-        .backup-btn{background:#0d9488;color:#fff;border:none;padding:8px;border-radius:6px;font-size:.8rem;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center}
-        .backup-btn.pdf-btn{background:#6366f1}
-        .summary-card{background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;padding:12px;border-radius:12px;text-align:center}
-        .summary-card.expense{background:linear-gradient(135deg,#059669,#10b981)}
-        @media print{.backup-box,.lang-switch,form,.delete-btn,.fn-nav-btn{display:none!important}}
+        :root {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --primary: #4f46e5;
+            --primary-light: #eeeffe;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #f1f5f9;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text-main);
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+        }
+
+        /* Top Bar & Header */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .sync-badge {
+            font-size: 0.75rem;
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .lang-btn {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 2px;
+        }
+
+        /* Minimal Card Component */
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Overview Stat Grid */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 16px;
+            border-radius: 14px;
+        }
+
+        .stat-card label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .stat-card .amount {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        .stat-card.income .amount { color: var(--primary); }
+        .stat-card.expense .amount { color: var(--success); }
+
+        /* Fortnight Banner */
+        .fn-card {
+            background: #0f172a;
+            color: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .fn-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .fn-header h2 {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #94a3b8;
+        }
+
+        .fn-nav {
+            display: flex;
+            gap: 4px;
+        }
+
+        .fn-btn {
+            background: #1e293b;
+            border: none;
+            color: #f8fafc;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        #fn-date-range {
+            font-size: 0.75rem;
+            color: #cbd5e1;
+            margin-bottom: 16px;
+        }
+
+        .fn-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .fn-stat-item h4 {
+            font-size: 0.7rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        .fn-stat-item p {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #f8fafc;
+            margin-top: 2px;
+        }
+
+        .fn-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #1e293b;
+        }
+
+        .fn-inputs label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+
+        .fn-inputs input {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        /* Forms */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            outline: none;
+            background: #fff;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 4px;
+        }
+
+        /* History List */
+        .history-list {
+            margin-top: 14px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.8rem;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-item-info strong {
+            display: block;
+            color: var(--text-main);
+            font-size: 0.82rem;
+            font-weight: 500;
+        }
+
+        .history-item-info span {
+            color: var(--text-muted);
+            font-size: 0.72rem;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+        }
+
+        .delete-btn:hover {
+            color: var(--danger);
+        }
+
+        /* Progress Bar */
+        .progress-bg {
+            background: #f1f5f9;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            background: var(--success);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .backup-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media print {
+            .top-bar, form, .delete-btn, .fn-nav, .backup-grid { display: none !important; }
+            body { background: #fff; padding: 0; }
+            .card, .fn-card { border: 1px solid #e2e8f0; box-shadow: none; }
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <div class="lang-switch"><button class="lang-btn" onclick="toggleLanguage()" id="lang-btn">🇬🇧 English</button></div>
-        <header><h1 data-i18n="title">บันทึกงานและรายจ่าย</h1><p id="current-date-display"></p></header>
+        <!-- Top Status & Lang -->
+        <div class="top-bar">
+            <span class="sync-badge" id="sync-status" onclick="fetchDataFromSheet()" style="cursor:pointer;">🔄 Syncing...</span>
+            <button class="lang-btn" onclick="toggleLanguage()" id="lang-btn">🇬🇧 EN</button>
+        </div>
 
-        <div class="card realtime-summary">
-            <h3 data-i18n="rt_title">📊 สรุปรายละเอียดรายรับรวม (เรียลไทม์)</h3>
-            <div class="rt-grid">
-                <div class="rt-item"><span data-i18n="rt_real_hrs">ชั่วโมงจริง:</span> <b id="rt-real-hours">0.0 ชม.</b></div>
-                <div class="rt-item"><span data-i18n="rt_paid_hrs">ชั่วโมงคิดเงิน:</span> <b id="rt-paid-hours">0.0 ชม.</b></div>
-                <div class="rt-item"><span data-i18n="rt_gross">ก่อน Tax:</span> <b id="rt-gross">$0.00</b></div>
-                <div class="rt-item"><span data-i18n="rt_tax">หัก Tax (21%):</span> <b id="rt-tax">$0.00</b></div>
-                <div class="rt-item super-item"><span data-i18n="rt_super">🏦 สะสม Super (11.5%):</span> <b id="rt-super">$0.00 AUD</b></div>
+        <header>
+            <h1 data-i18n="title">Work & Expense</h1>
+            <p id="current-date-display"></p>
+        </header>
+
+        <!-- Overview Stat Cards -->
+        <div class="stat-grid">
+            <div class="stat-card income">
+                <label data-i18n="sum_net_title">Net Income</label>
+                <div class="amount" id="total-net-sum">$0.00</div>
+            </div>
+            <div class="stat-card expense">
+                <label data-i18n="sum_expense_title">Expenses</label>
+                <div class="amount" id="total-expense-sum">$0.00</div>
             </div>
         </div>
 
-        <div class="fortnight-card">
-            <div class="fortnight-header">
-                <button class="fn-nav-btn" onclick="changeFortnight(-1)" data-i18n="fn_prev">◀ รอบก่อน</button>
-                <h2 data-i18n="fn_title">📅 รอบ Fortnight</h2>
-                <button class="fn-nav-btn" onclick="changeFortnight(1)" data-i18n="fn_next">รอบถัดไป ▶</button>
-            </div>
-            <div id="fn-date-range">กำลังโหลด...</div>
-            <div class="fn-grid">
-                <div class="fn-box"><h4 data-i18n="fn_net_title">สุทธิรอบนี้</h4><p id="fn-net-sum">$0.00</p><span id="fn-deduct-note">หักค่าบ้าน + วีซ่า</span></div>
-                <div class="fn-box"><h4 data-i18n="fn_takehome_title">เงินรับจริง</h4><p id="fn-takehome-sum">$0.00</p><span data-i18n="fn_takehome_sub">รับเข้ากระเป๋า</span></div>
-            </div>
-            <div class="fn-inputs">
-                <div><label data-i18n="label_elec">⚡ ค่าไฟ ($)</label><input type="number" step="any" id="fn-elec-input" placeholder="0.00" onchange="saveAndSyncUtilities()"></div>
-                <div><label data-i18n="label_gas">🔥 ค่าแก๊ส ($)</label><input type="number" step="any" id="fn-gas-input" placeholder="0.00" onchange="saveAndSyncUtilities()"></div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted)">
-                <span data-i18n="savings_title">💡 สัดส่วนเงินคงเหลือเก็บสะสม</span><b id="savings-percent">0%</b>
-            </div>
-            <div class="progress-bar-bg"><div class="progress-bar-fill" id="savings-bar"></div></div>
-        </div>
-
-        <div class="card">
-            <h2 data-i18n="work_form_title">⏱️ บันทึกเวลาเข้า-ออกงาน</h2>
-            <form id="work-form">
-                <div class="form-group"><label data-i18n="label_date">วันที่</label><input type="date" id="work-date" required></div>
-                <div class="form-row">
-                    <div class="form-group"><label data-i18n="label_start">เข้างาน</label><input type="time" id="work-start" required></div>
-                    <div class="form-group"><label data-i18n="label_end">เลิกงาน</label><input type="time" id="work-end" required></div>
+        <!-- Fortnight Minimal Banner -->
+        <div class="fn-card">
+            <div class="fn-header">
+                <h2 data-i18n="fn_title">Fortnight Cycle</h2>
+                <div class="fn-nav">
+                    <button class="fn-btn" onclick="changeFortnight(-1)">◀</button>
+                    <button class="fn-btn" onclick="changeFortnight(1)">▶</button>
                 </div>
-                <div class="form-group"><label data-i18n="label_memo">หมายเหตุ / Memo</label><input type="text" id="work-memo" placeholder="..."></div>
-                <button type="submit" data-i18n="btn_save_work">บันทึกและซิงค์ Drive</button>
+            </div>
+            <div id="fn-date-range">Loading cycle...</div>
+            
+            <div class="fn-body">
+                <div class="fn-stat-item">
+                    <h4 data-i18n="fn_net_title">Fortnight Net</h4>
+                    <p id="fn-net-sum">$0.00</p>
+                </div>
+                <div class="fn-stat-item">
+                    <h4 data-i18n="fn_takehome_title">Take-Home Pay</h4>
+                    <p id="fn-takehome-sum" style="color:#38bdf8;">$0.00</p>
+                </div>
+            </div>
+
+            <div class="fn-inputs">
+                <div>
+                    <label data-i18n="label_elec">⚡ Electricity ($)</label>
+                    <input type="number" step="any" id="fn-elec-input" placeholder="0.00" onchange="saveAndSyncUtilities()">
+                </div>
+                <div>
+                    <label data-i18n="label_gas">🔥 Gas ($)</label>
+                    <input type="number" step="any" id="fn-gas-input" placeholder="0.00" onchange="saveAndSyncUtilities()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Realtime Breakdown -->
+        <div class="card">
+            <div class="card-title"><span data-i18n="rt_title">Pay Details</span></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; font-size:0.8rem;">
+                <div><span style="color:var(--text-muted)" data-i18n="rt_real_hrs">Actual Hours:</span> <b id="rt-real-hours">0.0h</b></div>
+                <div><span style="color:var(--text-muted)" data-i18n="rt_paid_hrs">Paid Hours:</span> <b id="rt-paid-hours">0.0h</b></div>
+                <div><span style="color:var(--text-muted)" data-i18n="rt_gross">Gross Pay:</span> <b id="rt-gross">$0.00</b></div>
+                <div><span style="color:var(--text-muted)" data-i18n="rt_tax">Tax (21%):</span> <b id="rt-tax">$0.00</b></div>
+                <div style="grid-column: span 2; margin-top:4px; padding-top:8px; border-top:1px solid var(--border);">
+                    <span style="color:var(--text-muted)" data-i18n="rt_super">🏦 Super (11.5%):</span> <b id="rt-super" style="color:var(--primary)">$0.00</b>
+                </div>
+            </div>
+        </div>
+
+        <!-- Savings Progress -->
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
+                <span style="color:var(--text-muted)" data-i18n="savings_title">Savings Ratio</span>
+                <b id="savings-percent">0%</b>
+            </div>
+            <div class="progress-bg"><div class="progress-fill" id="savings-bar"></div></div>
+        </div>
+
+        <!-- Shift Form -->
+        <div class="card">
+            <div class="card-title"><span data-i18n="work_form_title">Log Work Shift</span></div>
+            <form id="work-form">
+                <div class="form-group">
+                    <label data-i18n="label_date">Date</label>
+                    <input type="date" id="work-date" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="label_start">Start Time</label>
+                        <input type="time" id="work-start" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="label_end">End Time</label>
+                        <input type="time" id="work-end" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="label_memo">Memo / Notes</label>
+                    <input type="text" id="work-memo" placeholder="e.g. Farm Shift">
+                </div>
+                <button type="submit" data-i18n="btn_save_work">Save Shift</button>
             </form>
             <div class="history-list" id="work-history"></div>
         </div>
 
+        <!-- Expense Form -->
         <div class="card">
-            <h2 data-i18n="expense_form_title">💸 บันทึกรายจ่ายประจำวัน (AUD)</h2>
+            <div class="card-title"><span data-i18n="expense_form_title">Log Expense</span></div>
             <form id="expense-form">
-                <div class="form-group"><label data-i18n="label_date">วันที่</label><input type="date" id="expense-date" required></div>
+                <div class="form-group">
+                    <label data-i18n="label_date">Date</label>
+                    <input type="date" id="expense-date" required>
+                </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label data-i18n="label_cat">หมวดหมู่</label>
+                        <label data-i18n="label_cat">Category</label>
                         <select id="expense-category" onchange="toggleOtherInput()" required>
-                            <option value="🍽️ ค่าอาหาร">🍽️ ค่าอาหาร</option>
-                            <option value="⛽ ค่าน้ำมัน">⛽ ค่าน้ำมัน</option>
-                            <option value="🛒 ซื้อของต่างๆ">🛒 ซื้อของต่างๆ</option>
-                            <option value="⚡ ค่าไฟ">⚡ ค่าไฟ</option>
-                            <option value="🔥 ค่าแก๊ส">🔥 ค่าแก๊ส</option>
-                            <option value="📌 อื่นๆ">📌 อื่นๆ (ระบุ)</option>
+                            <option value="🍽️ ค่าอาหาร">🍽️ Food</option>
+                            <option value="⛽ ค่าน้ำมัน">⛽ Fuel</option>
+                            <option value="🛒 ซื้อของต่างๆ">🛒 Groceries</option>
+                            <option value="⚡ ค่าไฟ">⚡ Electricity</option>
+                            <option value="🔥 ค่าแก๊ส">🔥 Gas</option>
+                            <option value="📌 อื่นๆ">📌 Others</option>
                         </select>
                     </div>
-                    <div class="form-group"><label data-i18n="label_amount">จำนวนเงิน (AUD)</label><input type="number" step="any" id="expense-amount" placeholder="0.00" required></div>
+                    <div class="form-group">
+                        <label data-i18n="label_amount">Amount ($)</label>
+                        <input type="number" step="any" id="expense-amount" placeholder="0.00" required>
+                    </div>
                 </div>
-                <div class="form-group" id="other-desc-group" style="display:none"><label data-i18n="label_other_desc">ระบุรายละเอียด</label><input type="text" id="expense-other-desc" placeholder="..."></div>
-                <div class="form-group"><label data-i18n="label_exp_memo">หมายเหตุ / Memo</label><input type="text" id="expense-memo" placeholder="..."></div>
-                <button type="submit" data-i18n="btn_save_expense">บันทึกรายจ่ายและซิงค์ Drive</button>
+                <div class="form-group" id="other-desc-group" style="display:none">
+                    <label data-i18n="label_other_desc">Specify</label>
+                    <input type="text" id="expense-other-desc">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="label_exp_memo">Memo / Notes</label>
+                    <input type="text" id="expense-memo" placeholder="e.g. Coles">
+                </div>
+                <button type="submit" data-i18n="btn_save_expense">Save Expense</button>
             </form>
             <div class="history-list" id="expense-history"></div>
         </div>
 
+        <!-- Charts Section -->
         <div class="card">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-                <h2 data-i18n="chart_bar_title" style="margin:0">📈 รายรับ - รายจ่าย รายเดือน</h2>
-                <select id="year-select" style="width:auto;padding:2px 6px" onchange="renderCharts()">
-                    <option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option>
+            <div class="card-title">
+                <span data-i18n="chart_bar_title">Monthly Overview</span>
+                <select id="year-select" style="width:auto; padding:2px 6px;" onchange="renderCharts()">
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
                 </select>
             </div>
-            <div style="height:200px"><canvas id="monthlyBarChart"></canvas></div>
+            <div style="height:180px;"><canvas id="monthlyBarChart"></canvas></div>
         </div>
 
         <div class="card">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-                <h2 data-i18n="chart_pie_title" style="margin:0">🍩 สัดส่วนรายจ่าย</h2>
-                <select id="expense-scope-select" style="width:auto;padding:2px 6px" onchange="renderCharts()">
-                    <option value="current_month" data-i18n="scope_month">เดือนนี้</option>
-                    <option value="all_time" data-i18n="scope_all">ทั้งหมด</option>
+            <div class="card-title">
+                <span data-i18n="chart_pie_title">Expense Breakdown</span>
+                <select id="expense-scope-select" style="width:auto; padding:2px 6px;" onchange="renderCharts()">
+                    <option value="current_month" data-i18n="scope_month">This Month</option>
+                    <option value="all_time" data-i18n="scope_all">All Time</option>
                 </select>
             </div>
-            <div style="height:180px"><canvas id="expensePieChart"></canvas></div>
+            <div style="height:170px;"><canvas id="expensePieChart"></canvas></div>
         </div>
 
-        <div class="backup-box">
-            <a href="https://sheets.google.com" target="_blank" class="backup-btn" data-i18n="btn_drive">☁️ เปิด Google Sheets</a>
-            <button class="backup-btn pdf-btn" onclick="window.print()" data-i18n="btn_pdf">📄 พิมพ์ / เซฟ PDF</button>
+        <!-- Backup & PDF -->
+        <div class="backup-grid">
+            <a href="https://sheets.google.com" target="_blank" class="btn-secondary" data-i18n="btn_drive">☁️ Sheets</a>
+            <button class="btn-secondary" onclick="window.print()" data-i18n="btn_pdf">📄 Export PDF</button>
         </div>
 
-        <div class="summary-box">
-            <div class="summary-card"><h3 data-i18n="sum_net_title">รายรับสุทธิรวม</h3><p id="total-net-sum">$0.00</p><span id="total-gross-sum">ก่อน Tax: $0.00</span></div>
-            <div class="summary-card expense"><h3 data-i18n="sum_expense_title">รายจ่ายรวม</h3><p id="total-expense-sum">$0.00</p><span>&nbsp;</span></div>
-        </div>
     </div>
 
     <script>
@@ -173,12 +547,12 @@
         let currentLang=localStorage.getItem('appLang')||'th';
 
         const i18n={
-            th:{title:"บันทึกงานและรายจ่าย",btn_drive:"☁️ เปิด Google Sheets",btn_pdf:"📄 พิมพ์/PDF",sum_net_title:"รายรับสุทธิรวม",sum_gross_sub:"ก่อน Tax: ",sum_expense_title:"รายจ่ายรวม",rt_title:"📊 สรุปรายรับรวม (เรียลไทม์)",rt_real_hrs:"ชั่วโมงจริง:",rt_paid_hrs:"ชั่วโมงคิดเงิน:",rt_gross:"ก่อน Tax:",rt_tax:"หัก Tax (21%):",rt_super:"🏦 สะสม Super (11.5%):",fn_prev:"◀ รอบก่อน",fn_title:"📅 รอบ Fortnight",fn_next:"รอบถัดไป ▶",fn_net_title:"สุทธิรอบนี้",fn_deduct_visa:"หักค่าบ้าน (-$380) + วีซ่า (-$250) + ไฟ/แก๊ส",fn_deduct_novisa:"หักค่าบ้าน (-$380) + ไฟ/แก๊ส [หมดวีซ่าแล้ว]",fn_takehome_title:"เงินรับจริง",fn_takehome_sub:"รับเข้ากระเป๋า",label_elec:"⚡ ค่าไฟ ($)",label_gas:"🔥 ค่าแก๊ส ($)",savings_title:"💡 สัดส่วนเงินเก็บ",savings_sub:"เงินเหลือเก็บ",chart_bar_title:"📈 รายรับ - รายจ่าย รายเดือน",chart_pie_title:"🍩 สัดส่วนรายจ่าย",scope_month:"เดือนนี้",scope_all:"ทั้งหมด",work_form_title:"⏱️ บันทึกเวลาเข้า-ออกงาน",label_date:"วันที่",label_start:"เข้างาน",label_end:"เลิกงาน",label_memo:"หมายเหตุ / Memo",label_exp_memo:"หมายเหตุ / Memo",btn_save_work:"บันทึกและซิงค์ Drive",expense_form_title:"💸 บันทึกรายจ่ายประจำวัน (AUD)",label_cat:"หมวดหมู่",cat_food:"🍽️ ค่าอาหาร",cat_fuel:"⛽ ค่าน้ำมัน",cat_groceries:"🛒 ซื้อของต่างๆ",cat_electricity:"⚡ ค่าไฟ",cat_gas:"🔥 ค่าแก๊ส",cat_other:"📌 อื่นๆ",label_other_desc:"ระบุรายละเอียด",label_amount:"จำนวนเงิน (AUD)",btn_save_expense:"บันทึกรายจ่ายและซิงค์ Drive",sun_badge:"(☀️ อาทิตย์ ×2)",sat_badge:"(🌤️ เสาร์ ×1.5)",work_hist_hrs:"จริง: {real} ชม. | คิดให้: {paid} ชม.",work_hist_net:"ก่อน Tax: ${gross} | สุทธิ: +${net} AUD",delete:"ลบ",exp_hist_pay:"จ่ายสุทธิ: -${amt} AUD",chart_net_income:"รายรับสุทธิ ($)",chart_expense:"รายจ่าย ($)"},
-            en:{title:"Work & Expense Tracker",btn_drive:"☁️ Open Sheets",btn_pdf:"📄 Print/PDF",sum_net_title:"Net Total",sum_gross_sub:"Gross: ",sum_expense_title:"Expenses Total",rt_title:"📊 Income Realtime Summary",rt_real_hrs:"Actual Hrs:",rt_paid_hrs:"Paid Hrs:",rt_gross:"Gross:",rt_tax:"Tax (21%):",rt_super:"🏦 Super (11.5%):",fn_prev:"◀ Prev",fn_title:"📅 Fortnight Period",fn_next:"Next ▶",fn_net_title:"Fortnight Net",fn_deduct_visa:"Deduct Rent (-$380) + Visa (-$250) + Utils",fn_deduct_novisa:"Deduct Rent (-$380) + Utils [Visa Done]",fn_takehome_title:"Take-Home Pay",fn_takehome_sub:"Pocketed Earnings",label_elec:"⚡ Elec ($)",label_gas:"🔥 Gas ($)",savings_title:"💡 Savings Ratio",savings_sub:"Savings",chart_bar_title:"📈 Monthly Income vs Expense",chart_pie_title:"🍩 Expense Breakdown",scope_month:"This Month",scope_all:"All Time",work_form_title:"⏱️ Work Shift Entry",label_date:"Date",label_start:"Start",label_end:"End",label_memo:"Notes / Memo",label_exp_memo:"Notes / Memo",btn_save_work:"Save & Sync Drive",expense_form_title:"💸 Daily Expenses (AUD)",label_cat:"Category",cat_food:"🍽️ Food",cat_fuel:"⛽ Fuel",cat_groceries:"🛒 Groceries",cat_electricity:"⚡ Electricity",cat_gas:"🔥 Gas",cat_other:"📌 Others",label_other_desc:"Specify Details",label_amount:"Amount (AUD)",btn_save_expense:"Save Expense & Sync",sun_badge:"(☀️ Sun Rate ×2)",sat_badge:"(🌤️ Sat Rate ×1.5)",work_hist_hrs:"Actual: {real}h | Paid: {paid}h",work_hist_net:"Gross: ${gross} | Net: +${net} AUD",delete:"Delete",exp_hist_pay:"Spent: -${amt} AUD",chart_net_income:"Net Income ($)",chart_expense:"Expense ($)"}
+            th:{title:"บันทึกงานและรายจ่าย",btn_drive:"☁️ Google Sheets",btn_pdf:"📄 เซฟ PDF",sum_net_title:"รายรับสุทธิ",sum_expense_title:"รายจ่ายรวม",rt_title:"รายละเอียดรายรับ",rt_real_hrs:"ชั่วโมงจริง:",rt_paid_hrs:"ชั่วโมงคิดเงิน:",rt_gross:"ก่อน Tax:",rt_tax:"หัก Tax (21%):",rt_super:"สะสม Super (11.5%):",fn_title:"รอบ Fortnight",fn_net_title:"สุทธิรอบนี้",fn_takehome_title:"เงินรับจริง",label_elec:"⚡ ค่าไฟ ($)",label_gas:"🔥 ค่าแก๊ส ($)",savings_title:"สัดส่วนเงินเก็บ",chart_bar_title:"ภาพรวมรายเดือน",chart_pie_title:"สัดส่วนรายจ่าย",scope_month:"เดือนนี้",scope_all:"ทั้งหมด",work_form_title:"บันทึกเวลาทำงาน",label_date:"วันที่",label_start:"เวลาเข้า",label_end:"เวลาเลิก",label_memo:"หมายเหตุ",btn_save_work:"บันทึกกะทำงาน",expense_form_title:"บันทึกรายจ่าย",label_cat:"หมวดหมู่",label_other_desc:"ระบุรายละเอียด",label_amount:"จำนวนเงิน ($)",btn_save_expense:"บันทึกรายจ่าย",delete:"ลบ"},
+            en:{title:"Work & Expense",btn_drive:"☁️ Google Sheets",btn_pdf:"📄 Save PDF",sum_net_title:"Net Income",sum_expense_title:"Expenses",rt_title:"Pay Breakdown",rt_real_hrs:"Actual Hrs:",rt_paid_hrs:"Paid Hrs:",rt_gross:"Gross:",rt_tax:"Tax (21%):",rt_super:"Super (11.5%):",fn_title:"Fortnight Cycle",fn_net_title:"Fortnight Net",fn_takehome_title:"Take-Home Pay",label_elec:"⚡ Electricity ($)",label_gas:"🔥 Gas ($)",savings_title:"Savings Ratio",chart_bar_title:"Monthly Overview",chart_pie_title:"Expense Breakdown",scope_month:"This Month",scope_all:"All Time",work_form_title:"Log Work Shift",label_date:"Date",label_start:"Start Time",label_end:"End Time",label_memo:"Memo / Notes",btn_save_work:"Save Shift",expense_form_title:"Log Expense",label_cat:"Category",label_other_desc:"Specify",label_amount:"Amount ($)",btn_save_expense:"Save Expense",delete:"Delete"}
         };
 
         function toggleLanguage(){currentLang=currentLang==='th'?'en':'th';localStorage.setItem('appLang',currentLang);updateUI()}
-        function updateUI(){document.getElementById('lang-btn').innerText=currentLang==='th'?'🇬🇧 English':'🇹🇭 ภาษาไทย';document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(i18n[currentLang][k])el.innerText=i18n[currentLang][k]});renderData()}
+        function updateUI(){document.getElementById('lang-btn').innerText=currentLang==='th'?'🇬🇧 EN':'🇹🇭 TH';document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(i18n[currentLang][k])el.innerText=i18n[currentLang][k]});renderData()}
 
         const todayObj=new Date(), today=todayObj.toISOString().split('T')[0];
         document.getElementById('work-date').value=today; document.getElementById('expense-date').value=today;
@@ -197,6 +571,23 @@
         }
 
         function changeFortnight(dir){fortnightOffset+=dir;renderData()}
+
+        function fetchDataFromSheet() {
+            const statusEl = document.getElementById('sync-status');
+            statusEl.innerText = "🔄 Syncing...";
+            fetch(SCRIPT_URL)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.workData) { workData = data.workData; localStorage.setItem('workData', JSON.stringify(workData)); }
+                    if (data.expenseData) { expenseData = data.expenseData; localStorage.setItem('expenseData', JSON.stringify(expenseData)); }
+                    statusEl.innerText = "✅ Synced";
+                    renderData();
+                })
+                .catch(err => {
+                    statusEl.innerText = "⚡ Offline";
+                    renderData();
+                });
+        }
 
         function saveAndSyncUtilities(){
             const currentFn=getFortnightInfo(todayObj,fortnightOffset), fnKey=currentFn.fnStart.toISOString().split('T')[0];
@@ -241,15 +632,15 @@
         function renderData(){
             recalculatePayRates();
             expenseData.sort((a,b)=>new Date(b.date)-new Date(a.date));
-            document.getElementById('current-date-display').innerText=todayObj.toLocaleDateString(currentLang==='th'?'th-TH':'en-US',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+            document.getElementById('current-date-display').innerText=todayObj.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric',weekday:'short'});
 
             let tGross=0, tNet=0, tSuper=0, tReal=0, tPaid=0, fnNetTotal=0;
             const currentFn=getFortnightInfo(todayObj,fortnightOffset), fnKey=currentFn.fnStart.toISOString().split('T')[0];
             const currentFnUtil=fnUtilitiesData[fnKey]||{elec:0,gas:0};
             document.getElementById('fn-elec-input').value=currentFnUtil.elec||''; document.getElementById('fn-gas-input').value=currentFnUtil.gas||'';
 
-            const activeMonths=currentLang==='th'?['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-            document.getElementById('fn-date-range').innerText=`${currentLang==='th'?'รอบวันที่':'Period:'} ${currentFn.fnStart.getDate()} ${activeMonths[currentFn.fnStart.getMonth()]} - ${currentFn.fnEnd.getDate()} ${activeMonths[currentFn.fnEnd.getMonth()]}`;
+            const activeMonths=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            document.getElementById('fn-date-range').innerText=`${currentFn.fnStart.getDate()} ${activeMonths[currentFn.fnStart.getMonth()]} - ${currentFn.fnEnd.getDate()} ${activeMonths[currentFn.fnEnd.getMonth()]}`;
 
             const isVisaActive=(currentFn.fnStart.getFullYear()<2026)||(currentFn.fnStart.getFullYear()===2026&&currentFn.fnStart.getMonth()<=11);
 
@@ -258,48 +649,46 @@
                 const id=new Date(item.date+'T00:00:00'); if(id>=currentFn.fnStart&&id<=currentFn.fnEnd) fnNetTotal+=Number(item.netPay);
             });
 
-            // ป้องกันบั๊ก Index Shift โดยอ้างอิง Object ตรงๆ
             const workList=document.getElementById('work-history'); workList.innerHTML='';
             [...workData].sort((a,b)=>new Date(`${b.date}T${b.start||'00:00'}:00`)-new Date(`${a.date}T${a.start||'00:00'}:00`)).forEach((item)=>{
-                let badge='', cls='';
-                if(item.isSunday){cls='sunday-item';badge=` <b style="color:#d97706">${i18n[currentLang].sun_badge}</b>`;}
-                else if(item.isSaturday){cls='saturday-item';badge=` <b style="color:#2563eb">${i18n[currentLang].sat_badge}</b>`;}
+                let badge='';
+                if(item.isSunday) badge=' <span style="color:var(--warning)">(Sun ×2)</span>';
+                else if(item.isSaturday) badge=' <span style="color:var(--primary)">(Sat ×1.5)</span>';
                 
-                const div=document.createElement('div'); div.className=`history-item ${cls}`;
-                div.innerHTML=`<div><strong>${item.date} (${item.start}-${item.end})${badge}</strong><span>${i18n[currentLang].work_hist_hrs.replace('{real}',item.realHours).replace('{paid}',item.paidHours)} ${Number(item.otHours)>0?`(OT: ${item.otHours}h)`:''}</span>${item.memo?`<span class="memo-tag">📝 ${item.memo}</span>`:''}<span style="color:var(--primary);font-weight:500">+${Number(item.netPay).toFixed(2)} AUD</span></div>`;
+                const div=document.createElement('div'); div.className='history-item';
+                div.innerHTML=`<div class="history-item-info"><strong>${item.date} (${item.start}-${item.end})${badge}</strong><span>${item.realHours}h real | ${item.paidHours}h paid ${Number(item.otHours)>0?`(OT: ${item.otHours}h)`:''}</span>${item.memo?`<br><span>📝 ${item.memo}</span>`:''}</div><div style="font-weight:600; color:var(--primary);">${Number(item.netPay).toFixed(2)}</div>`;
                 
                 const btn=document.createElement('button'); btn.className='delete-btn'; btn.innerText=i18n[currentLang].delete;
                 btn.onclick=()=>deleteWorkItem(item);
                 div.appendChild(btn); workList.appendChild(div);
             });
 
-            document.getElementById('total-net-sum').innerText=`$${tNet.toLocaleString(undefined,{minimumFractionDigits:2})} AUD`;
-            document.getElementById('total-gross-sum').innerText=`${i18n[currentLang].sum_gross_sub}$${tGross.toLocaleString(undefined,{minimumFractionDigits:2})}`;
-            document.getElementById('rt-real-hours').innerText=`${tReal.toFixed(1)} ${currentLang==='th'?'ชม.':'hrs'}`;
-            document.getElementById('rt-paid-hours').innerText=`${tPaid.toFixed(1)} ${currentLang==='th'?'ชม.':'hrs'}`;
+            document.getElementById('total-net-sum').innerText=`$${tNet.toLocaleString(undefined,{minimumFractionDigits:2})}`;
+            document.getElementById('rt-real-hours').innerText=`${tReal.toFixed(1)}h`;
+            document.getElementById('rt-paid-hours').innerText=`${tPaid.toFixed(1)}h`;
             document.getElementById('rt-gross').innerText=`$${tGross.toFixed(2)}`;
             document.getElementById('rt-tax').innerText=`$${(tGross*TAX_RATE).toFixed(2)}`;
-            document.getElementById('rt-super').innerText=`$${tSuper.toFixed(2)} AUD`;
+            document.getElementById('rt-super').innerText=`$${tSuper.toFixed(2)}`;
 
             let fnDeduct=RENT_PER_FN+Number(currentFnUtil.elec)+Number(currentFnUtil.gas)+(isVisaActive?VISA_PER_FN:0);
-            document.getElementById('fn-deduct-note').innerText=isVisaActive?i18n[currentLang].fn_deduct_visa:i18n[currentLang].fn_deduct_novisa;
-            document.getElementById('fn-net-sum').innerText=`$${fnNetTotal.toLocaleString(undefined,{minimumFractionDigits:2})} AUD`;
-            document.getElementById('fn-takehome-sum').innerText=`$${(fnNetTotal-fnDeduct).toLocaleString(undefined,{minimumFractionDigits:2})} AUD`;
+            document.getElementById('fn-net-sum').innerText=`$${fnNetTotal.toLocaleString(undefined,{minimumFractionDigits:2})}`;
+            document.getElementById('fn-takehome-sum').innerText=`$${(fnNetTotal-fnDeduct).toLocaleString(undefined,{minimumFractionDigits:2})}`;
 
             const expList=document.getElementById('expense-history'); expList.innerHTML=''; let tExp=0;
             expenseData.forEach((item,idx)=>{
                 tExp+=Number(item.amount);
-                const div=document.createElement('div'); div.className='history-item expense-item';
-                div.innerHTML=`<div><strong>${item.date} - ${item.category}</strong>${item.memo?`<span class="memo-tag">📝 ${item.memo}</span>`:''}<span style="color:var(--success);font-weight:500">-${Number(item.amount).toFixed(2)} AUD</span></div>`;
-                const btn=document.createElement('button'); btn.className='delete-btn'; btn.innerText=i18n[currentLang].delete;
-                btn.onclick=()=>deleteExpenseItem(idx);
-                div.appendChild(btn); expList.appendChild(div);
+                const div=document.createElement('div'); div.className='history-item';
+                div.innerHTML=`<div class="history-item-info"><strong>${item.date} - ${item.category}</strong>${item.memo?`<span>📝 ${item.memo}</span>`:''}</div><div style="font-weight:600; color:var(--success);">${Number(item.amount).toFixed(2)}</div>`;
+                const btn=document.className='delete-btn'; btn.innerText=i18n[currentLang].delete;
+                const btnEl=document.createElement('button'); btnEl.className='delete-btn'; btnEl.innerText='✕';
+                btnEl.onclick=()=>deleteExpenseItem(idx);
+                div.appendChild(btnEl); expList.appendChild(div);
             });
-            document.getElementById('total-expense-sum').innerText=`$${tExp.toLocaleString(undefined,{minimumFractionDigits:2})} AUD`;
+            document.getElementById('total-expense-sum').innerText=`$${tExp.toLocaleString(undefined,{minimumFractionDigits:2})}`;
 
             let ratio=tNet>0?Math.max(0,Math.min(100,((tNet-tExp)/tNet)*100)):0;
             document.getElementById('savings-bar').style.width=`${ratio.toFixed(0)}%`;
-            document.getElementById('savings-percent').innerText=`${ratio.toFixed(0)}% ${i18n[currentLang].savings_sub}`;
+            document.getElementById('savings-percent').innerText=`${ratio.toFixed(0)}%`;
             renderCharts();
         }
 
@@ -310,25 +699,25 @@
             workData.forEach(i=>{const d=new Date(i.date+'T00:00:00');if(d.getFullYear().toString()===yr)mIncome[d.getMonth()]+=Number(i.netPay)});
             expenseData.forEach(i=>{const d=new Date(i.date+'T00:00:00');if(d.getFullYear().toString()===yr)mExpense[d.getMonth()]+=Number(i.amount)});
 
-            const labels=currentLang==='th'?['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            const labels=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
             if(barChartInstance) barChartInstance.destroy();
             barChartInstance=new Chart(document.getElementById('monthlyBarChart').getContext('2d'),{
-                type:'bar',data:{labels,datasets:[{label:i18n[currentLang].chart_net_income,data:mIncome,backgroundColor:'#4f46e5',borderRadius:4},{label:i18n[currentLang].chart_expense,data:mExpense,backgroundColor:'#10b981',borderRadius:4}]},
-                options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true}}}
+                type:'bar',data:{labels,datasets:[{label:'Income',data:mIncome,backgroundColor:'#6366f1',borderRadius:4},{label:'Expense',data:mExpense,backgroundColor:'#10b981',borderRadius:4}]},
+                options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'#f1f5f9'}},x:{grid:{display:false}}}}
             });
 
-            const cats={[i18n[currentLang].cat_food]:0,[i18n[currentLang].cat_fuel]:0,[i18n[currentLang].cat_groceries]:0,[i18n[currentLang].cat_electricity]:0,[i18n[currentLang].cat_gas]:0,[i18n[currentLang].cat_other]:0};
+            const cats={'Food':0,'Fuel':0,'Groceries':0,'Electricity':0,'Gas':0,'Others':0};
             const curMonth=todayObj.getFullYear()+'-'+String(todayObj.getMonth()+1).padStart(2,'0');
 
             expenseData.forEach(i=>{
                 if(scope==='all_time'||i.date.substring(0,7)===curMonth){
-                    let k=i18n[currentLang].cat_other;
-                    if(i.category.includes('อาหาร')||i.category.includes('Food')) k=i18n[currentLang].cat_food;
-                    else if(i.category.includes('น้ำมัน')||i.category.includes('Fuel')) k=i18n[currentLang].cat_fuel;
-                    else if(i.category.includes('ซื้อของ')||i.category.includes('Shopping')) k=i18n[currentLang].cat_groceries;
-                    else if(i.category.includes('ค่าไฟ')||i.category.includes('Electricity')) k=i18n[currentLang].cat_electricity;
-                    else if(i.category.includes('ค่าแก๊ส')||i.category.includes('Gas')) k=i18n[currentLang].cat_gas;
+                    let k='Others';
+                    if(i.category.includes('อาหาร')||i.category.includes('Food')) k='Food';
+                    else if(i.category.includes('น้ำมัน')||i.category.includes('Fuel')) k='Fuel';
+                    else if(i.category.includes('ซื้อของ')||i.category.includes('Shopping')) k='Groceries';
+                    else if(i.category.includes('ค่าไฟ')||i.category.includes('Electricity')) k='Electricity';
+                    else if(i.category.includes('ค่าแก๊ส')||i.category.includes('Gas')) k='Gas';
                     cats[k]+=Number(i.amount);
                 }
             });
@@ -352,7 +741,7 @@
 
             if(SCRIPT_URL!=="YOUR_WEB_APP_URL") fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(item)});
             document.getElementById('work-start').value=''; document.getElementById('work-end').value=''; document.getElementById('work-memo').value='';
-            renderData(); alert(currentLang==='th'?'✅ บันทึกสำเร็จ!':'✅ Saved!');
+            renderData();
         });
 
         document.getElementById('expense-form').addEventListener('submit',e=>{
@@ -364,11 +753,11 @@
 
             if(SCRIPT_URL!=="YOUR_WEB_APP_URL") fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(item)});
             document.getElementById('expense-amount').value=''; document.getElementById('expense-other-desc').value=''; document.getElementById('expense-memo').value=''; document.getElementById('other-desc-group').style.display='none';
-            renderData(); alert(currentLang==='th'?'✅ บันทึกรายจ่ายสำเร็จ!':'✅ Expense saved!');
+            renderData();
         });
 
         function deleteWorkItem(item){
-            if(confirm(currentLang==='th'?'ต้องการลบรายการนี้ และลบข้อมูลใน Sheets ด้วย?':'Delete this item and from Sheets?')){
+            if(confirm('Delete this item?')){
                 if(SCRIPT_URL!=="YOUR_WEB_APP_URL") fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'delete',type:'work',date:item.date,start:item.start,end:item.end})});
                 const idx=workData.indexOf(item); if(idx>-1) workData.splice(idx,1);
                 recalculatePayRates(); localStorage.setItem('workData',JSON.stringify(workData)); renderData();
@@ -377,13 +766,14 @@
 
         function deleteExpenseItem(idx){
             const item=expenseData[idx];
-            if(confirm(currentLang==='th'?'ต้องการลบรายการนี้ และลบข้อมูลใน Sheets ด้วย?':'Delete this item and from Sheets?')){
+            if(confirm('Delete this item?')){
                 if(SCRIPT_URL!=="YOUR_WEB_APP_URL") fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'delete',type:'expense',date:item.date,category:item.category,amount:item.amount})});
                 expenseData.splice(idx,1); localStorage.setItem('expenseData',JSON.stringify(expenseData)); renderData();
             }
         }
 
         updateUI();
+        fetchDataFromSheet();
         if('serviceWorker'in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
     </script>
 </body>
