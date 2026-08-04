@@ -1059,8 +1059,6 @@
             });
 
             displayWorkData.forEach((item) => {
-                const originalIndex = workData.indexOf(item);
-
                 let dayBadge = '';
                 let dayClass = '';
 
@@ -1086,7 +1084,7 @@
                                 ${netText}
                             </span>
                         </div>
-                        <button class="delete-btn" onclick="deleteWork(${originalIndex})">${i18n[currentLang].delete}</button>
+                        <button class="delete-btn" onclick="deleteWork('${item.id || ''}', '${item.date}')">${i18n[currentLang].delete}</button>
                     </div>
                 `;
             });
@@ -1129,7 +1127,7 @@
                             ${expMemoText}
                             <span style="color: #059669; font-weight: 500; margin-top: 2px;">${payText}</span>
                         </div>
-                        <button class="delete-btn" onclick="deleteExpense(${index})">${i18n[currentLang].delete}</button>
+                        <button class="delete-btn" onclick="deleteExpense('${item.id || ''}', ${index})">${i18n[currentLang].delete}</button>
                     </div>
                 `;
             });
@@ -1192,12 +1190,8 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' }
-                    },
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { y: { beginAtZero: true } }
                 }
             });
 
@@ -1239,14 +1233,39 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'right' }
-                    }
+                    plugins: { legend: { position: 'right' } }
                 }
             });
         }
 
-        workForm.addEventListener('submit', (e) => {
+        // ==========================================
+        // 1. ฟังก์ชันดึงข้อมูลจาก Google Sheets (Cloud)
+        // ==========================================
+        async function loadDataFromDrive() {
+            if (!SCRIPT_URL || SCRIPT_URL === "YOUR_WEB_APP_URL") return;
+            
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                
+                if (data && (data.work || data.expense)) {
+                    workData = data.work || [];
+                    expenseData = data.expense || [];
+                    
+                    localStorage.setItem('workData', JSON.stringify(workData));
+                    localStorage.setItem('expenseData', JSON.stringify(expenseData));
+                    
+                    renderData();
+                }
+            } catch (error) {
+                console.log("Offline mode: ดึงข้อมูลจาก LocalStorage แทน");
+            }
+        }
+
+        // ==========================================
+        // 2. ฟังก์ชันบันทึกเวลาทำงาน
+        // ==========================================
+        workForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const dateStr = document.getElementById('work-date').value;
             const start = document.getElementById('work-start').value;
@@ -1263,12 +1282,11 @@
             if (diff < 0) diff += 24; 
 
             let realHours = diff;
-            if (realHours >= 5) {
-                realHours -= 0.5;
-            }
+            if (realHours >= 5) realHours -= 0.5;
             realHours = Math.max(0, realHours);
 
             const newWork = { 
+                id: new Date().getTime().toString(),
                 type: 'work',
                 date: dateStr, 
                 start, 
@@ -1279,36 +1297,35 @@
                 grossPay: 0,
                 netPay: 0,
                 superPay: 0,
-                memo,
-                isSunday: false,
-                isSaturday: false
+                memo
             };
 
             workData.push(newWork);
             recalculatePayRates();
-            localStorage.setItem('workData', JSON.stringify(workData));
+            
+            const savedItem = workData.find(item => item.id === newWork.id) || newWork;
 
-            const savedItem = workData.find(item => item.date === dateStr && item.start === start);
-
-            if(SCRIPT_URL !== "YOUR_WEB_APP_URL") {
-                fetch(SCRIPT_URL, { 
+            if (SCRIPT_URL !== "YOUR_WEB_APP_URL") {
+                await fetch(SCRIPT_URL, { 
                     method: 'POST', 
                     mode: 'no-cors', 
                     headers: { 'Content-Type': 'text/plain' },
-                    redirect: 'follow',
-                    body: JSON.stringify(savedItem || newWork) 
+                    body: JSON.stringify(savedItem) 
                 });
             }
 
             document.getElementById('work-start').value = '';
             document.getElementById('work-end').value = '';
             document.getElementById('work-memo').value = '';
-            renderData();
-
-            alert(currentLang === 'th' ? '✅ บันทึกสำเร็จ!' : '✅ Saved successfully!');
+            
+            await loadDataFromDrive();
+            alert(currentLang === 'th' ? '✅ บันทึกและซิงค์ข้อมูลสำเร็จ!' : '✅ Saved successfully!');
         });
 
-        expenseForm.addEventListener('submit', (e) => {
+        // ==========================================
+        // 3. ฟังก์ชันบันทึกรายจ่าย
+        // ==========================================
+        expenseForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const date = document.getElementById('expense-date').value;
             const categorySelect = document.getElementById('expense-category').value;
@@ -1322,6 +1339,7 @@
             }
 
             const newExpense = { 
+                id: new Date().getTime().toString(),
                 type: 'expense',
                 date, 
                 category, 
@@ -1330,14 +1348,12 @@
             };
 
             expenseData.push(newExpense);
-            localStorage.setItem('expenseData', JSON.stringify(expenseData));
-            
-            if(SCRIPT_URL !== "YOUR_WEB_APP_URL") {
-                fetch(SCRIPT_URL, { 
+
+            if (SCRIPT_URL !== "YOUR_WEB_APP_URL") {
+                await fetch(SCRIPT_URL, { 
                     method: 'POST', 
                     mode: 'no-cors', 
                     headers: { 'Content-Type': 'text/plain' },
-                    redirect: 'follow',
                     body: JSON.stringify(newExpense) 
                 });
             }
@@ -1346,96 +1362,56 @@
             document.getElementById('expense-other-desc').value = '';
             document.getElementById('expense-memo').value = '';
             document.getElementById('other-desc-group').style.display = 'none';
-            renderData();
-
+            
+            await loadDataFromDrive();
             alert(currentLang === 'th' ? '✅ บันทึกรายจ่ายสำเร็จ!' : '✅ Expense saved successfully!');
         });
 
-        // ฟังก์ชันลบรายการและสั่งยิงคำสั่งสั่งลบไปที่ Google Sheets
-        window.deleteWork = function(index) {
-            const itemToDelete = workData[index];
-
-            if (confirm(currentLang === 'th' ? 'ต้องการลบรายการนี้ และลบข้อมูลออกจาก Google Sheets ด้วยใช่หรือไม่?' : 'Delete this item and remove from Google Sheets?')) {
-                // ยิงคำสั่งลบไปที่ Apps Script
+        // ==========================================
+        // 4. ฟังก์ชันลบรายการและซิงค์กลับทันที
+        // ==========================================
+        window.deleteWork = async function(id, date) {
+            if (confirm(currentLang === 'th' ? 'ต้องการลบรายการนี้ และลบข้อมูลออกจาก Google Sheets ใช่หรือไม่?' : 'Delete this item from Google Sheets?')) {
                 if (SCRIPT_URL !== "YOUR_WEB_APP_URL") {
-                    fetch(SCRIPT_URL, { 
+                    await fetch(SCRIPT_URL, { 
                         method: 'POST', 
                         mode: 'no-cors', 
                         headers: { 'Content-Type': 'text/plain' },
-                        redirect: 'follow',
                         body: JSON.stringify({
                             action: 'delete',
                             type: 'work',
-                            date: itemToDelete.date,
-                            start: itemToDelete.start,
-                            end: itemToDelete.end
+                            id: id,
+                            date: date
                         }) 
                     });
                 }
 
-                workData.splice(index, 1);
-                recalculatePayRates();
-                localStorage.setItem('workData', JSON.stringify(workData));
-                renderData();
+                await loadDataFromDrive();
             }
         }
 
-        window.deleteExpense = function(index) {
-            const itemToDelete = expenseData[index];
-
-            if (confirm(currentLang === 'th' ? 'ต้องการลบรายการนี้ และลบข้อมูลออกจาก Google Sheets ด้วยใช่หรือไม่?' : 'Delete this item and remove from Google Sheets?')) {
-                // ยิงคำสั่งลบไปที่ Apps Script
+        window.deleteExpense = async function(id, index) {
+            const item = expenseData[index];
+            if (confirm(currentLang === 'th' ? 'ต้องการลบรายการนี้ และลบข้อมูลออกจาก Google Sheets ใช่หรือไม่?' : 'Delete this item from Google Sheets?')) {
                 if (SCRIPT_URL !== "YOUR_WEB_APP_URL") {
-                    fetch(SCRIPT_URL, { 
+                    await fetch(SCRIPT_URL, { 
                         method: 'POST', 
                         mode: 'no-cors', 
                         headers: { 'Content-Type': 'text/plain' },
-                        redirect: 'follow',
                         body: JSON.stringify({
                             action: 'delete',
                             type: 'expense',
-                            date: itemToDelete.date,
-                            category: itemToDelete.category,
-                            amount: itemToDelete.amount
+                            id: id,
+                            date: item ? item.date : ''
                         }) 
                     });
                 }
 
-                expenseData.splice(index, 1);
-                localStorage.setItem('expenseData', JSON.stringify(expenseData));
-                renderData();
+                await loadDataFromDrive();
             }
         }
 
-        updateUI();
-        // ==========================================
-        // เพิ่มฟังก์ชันดึงข้อมูลจาก Google Sheets
-        // ==========================================
-        async function loadDataFromDrive() {
-            if (SCRIPT_URL === "YOUR_WEB_APP_URL" || !SCRIPT_URL) return;
-            
-            try {
-                const response = await fetch(SCRIPT_URL);
-                const data = await response.json();
-                
-                if (data.work && data.expense) {
-                    workData = data.work;
-                    expenseData = data.expense;
-                    
-                    // บันทึกสำรองไว้ใน LocalStorage ของเครื่องด้วย
-                    localStorage.setItem('workData', JSON.stringify(workData));
-                    localStorage.setItem('expenseData', JSON.stringify(expenseData));
-                    
-                    renderData();
-                }
-            } catch (error) {
-                console.log("Offline mode: โหลดข้อมูลเดิมจาก LocalStorage");
-            }
-        }
-
-        // ==========================================
-        // เรียกดึงข้อมูลทันทีเมื่อเปิดหน้าเว็บ/แอป
-        // ==========================================
+        // โหลดข้อมูลอัตโนมัติเมื่อเปิดแอป
         window.addEventListener('load', () => {
             loadDataFromDrive();
         });
@@ -1447,94 +1423,6 @@
         }
 
         updateUI();
-        // ==========================================
-        // 1. ฟังก์ชันดึงข้อมูลล่าสุดจาก Google Sheets (Cloud)
-        // ==========================================
-        async function loadDataFromDrive() {
-            if (!SCRIPT_URL || SCRIPT_URL === "YOUR_WEB_APP_URL") return;
-            
-            try {
-                const response = await fetch(SCRIPT_URL);
-                const data = await response.json();
-                
-                if (data && (data.work || data.expense)) {
-                    workData = data.work || [];
-                    expenseData = data.expense || [];
-                    
-                    // บันทึกสำรองไว้ใน LocalStorage ของเครื่องด้วย
-                    localStorage.setItem('workData', JSON.stringify(workData));
-                    localStorage.setItem('expenseData', JSON.stringify(expenseData));
-                    
-                    renderData();
-                }
-            } catch (error) {
-                console.log("Offline mode: ดึงข้อมูลจาก LocalStorage แทน");
-            }
-        }
-
-        // ==========================================
-        // 2. ฟังก์ชันบันทึกงาน (สั่งซิงค์ข้อมูลกลับทันทีหลังบันทึก)
-        // ==========================================
-        async function saveWork() {
-            // ... (โค้ดคำนวณและเตรียม payload เดิมของคุณ) ...
-            
-            // ตัวอย่างช่วงส่งข้อมูลไป Apps Script:
-            try {
-                await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                // 💡 จุดสำคัญ: สั่งดึงข้อมูลล่าสุดจาก Cloud กลับมาโชว์ทันที
-                await loadDataFromDrive();
-            } catch (err) {
-                console.error("Save error:", err);
-            }
-        }
-
-        // ==========================================
-        // 3. ฟังก์ชันลบงาน (สั่งซิงค์ข้อมูลกลับทันทีหลังลบ)
-        // ==========================================
-        async function deleteWork(id) {
-            const item = workData.find(w => w.id === id);
-            if (!item) return;
-
-            // ลบในเครื่องก่อนเพื่อความรวดเร็ว
-            workData = workData.filter(w => w.id !== id);
-            renderData();
-
-            // ส่งคำสั่งลบไปที่ Google Apps Script
-            try {
-                await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'delete',
-                        type: 'work',
-                        id: id,
-                        date: item.date
-                    })
-                });
-
-                // 💡 จุดสำคัญ: สั่งดึงข้อมูลล่าสุดจาก Cloud กลับมาอัปเดตหน้าจอทันที
-                await loadDataFromDrive();
-            } catch (err) {
-                console.error("Delete error:", err);
-            }
-        }
-
-        // ==========================================
-        // 4. โหลดข้อมูลอัตโนมัติทันทีเมื่อเปิดแอปขึ้นมา
-        // ==========================================
-        window.addEventListener('load', () => {
-            loadDataFromDrive();
-        });
-    </script>
-</body>
-</html>
     </script>
 </body>
 </html>
