@@ -1408,6 +1408,48 @@
         }
 
         updateUI();
+        // ==========================================
+        // เพิ่มฟังก์ชันดึงข้อมูลจาก Google Sheets
+        // ==========================================
+        async function loadDataFromDrive() {
+            if (SCRIPT_URL === "YOUR_WEB_APP_URL" || !SCRIPT_URL) return;
+            
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                
+                if (data.work && data.expense) {
+                    workData = data.work;
+                    expenseData = data.expense;
+                    
+                    // บันทึกสำรองไว้ใน LocalStorage ของเครื่องด้วย
+                    localStorage.setItem('workData', JSON.stringify(workData));
+                    localStorage.setItem('expenseData', JSON.stringify(expenseData));
+                    
+                    renderData();
+                }
+            } catch (error) {
+                console.log("Offline mode: โหลดข้อมูลเดิมจาก LocalStorage");
+            }
+        }
+
+        // ==========================================
+        // เรียกดึงข้อมูลทันทีเมื่อเปิดหน้าเว็บ/แอป
+        // ==========================================
+        window.addEventListener('load', () => {
+            loadDataFromDrive();
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js');
+            });
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
     </script>
 </body>
 </html>
