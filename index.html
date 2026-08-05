@@ -927,7 +927,15 @@ function fetchDataFromSheet() {
     .then(res => res.json())
     .then(data => {
         if (data.workShifts && Array.isArray(data.workShifts)) {
-            workShifts = data.workShifts;
+            // แมปข้อมูลจาก Sheet ให้เข้ากับฟอร์แมตของหน้าเว็บ
+            workShifts = data.workShifts.map((s, idx) => ({
+                id: s.id || Date.now() + idx,
+                date: s.date,
+                start: s.start,
+                end: s.end,
+                gross: s.gross,
+                memo: s.memo
+            }));
             localStorage.setItem('workShifts', JSON.stringify(workShifts));
         }
         updateUI();
