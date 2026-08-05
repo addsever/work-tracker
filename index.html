@@ -919,25 +919,29 @@
             .catch(()=>{badge.innerText="⚠️ Offline";});
         }
 
-        function fetchDataFromSheet(){
-            const badge=document.getElementById('sync-status');
-            badge.innerText="🔄 Syncing...";
-            fetch(SCRIPT_URL)
-            .then(res=>res.json())
-            .then(data=>{
-                if(data.workShifts) workShifts=data.workShifts;
-                if(data.expenses) expenses=data.expenses;
-                localStorage.setItem('workShifts',JSON.stringify(workShifts));
-                localStorage.setItem('expenses',JSON.stringify(expenses));
-                updateUI();
-                badge.innerText="✅ Synced";
-                setTimeout(()=>badge.innerText="☁️ Cloud Sync",3000);
-            })
-            .catch(()=>{
-                badge.innerText="☁️ Cloud Sync";
-                updateUI();
-            });
+function fetchDataFromSheet() {
+    const badge = document.getElementById('sync-status');
+    if (badge) badge.innerText = "🔄 Syncing...";
+    
+    fetch(SCRIPT_URL)
+    .then(res => res.json())
+    .then(data => {
+        if (data.workShifts && Array.isArray(data.workShifts)) {
+            workShifts = data.workShifts;
+            localStorage.setItem('workShifts', JSON.stringify(workShifts));
         }
+        updateUI();
+        if (badge) {
+            badge.innerText = "✅ Synced";
+            setTimeout(() => badge.innerText = "☁️ Cloud Sync", 3000);
+        }
+    })
+    .catch(err => {
+        console.error("Sync Error:", err);
+        if (badge) badge.innerText = "☁️ Cloud Sync";
+        updateUI();
+    });
+}
 
         window.onload=fetchDataFromSheet;
     </script>
