@@ -88,7 +88,6 @@
             margin-top: 2px;
         }
 
-        /* Tab Navigation Bar */
         .tab-nav {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -404,14 +403,13 @@
             <p id="current-date-display"></p>
         </header>
 
-        <!-- Tab Navigation (ซ้าย - กลาง - ขวา) -->
         <div class="tab-nav">
             <button class="tab-btn active" onclick="switchTab('left')" id="btn-tab-left">📊 สรุปรายเดือน</button>
             <button class="tab-btn" onclick="switchTab('center')" id="btn-tab-center">📝 บันทึกรายวัน</button>
             <button class="tab-btn" onclick="switchTab('right')" id="btn-tab-right">📈 กราฟวิเคราะห์</button>
         </div>
 
-        <!-- TAB LEFT: สรุปรายรับรายจ่ายต่อเดือน & Fortnight -->
+        <!-- TAB LEFT -->
         <div id="tab-left" class="tab-content active">
             <div class="stat-grid">
                 <div class="stat-card income">
@@ -479,7 +477,7 @@
             </div>
         </div>
 
-        <!-- TAB CENTER: ข้อมูลรายวัน (บันทึกกะทำงาน + รายจ่าย) -->
+        <!-- TAB CENTER -->
         <div id="tab-center" class="tab-content">
             <div class="card">
                 <div class="card-title"><span data-i18n="work_form_title">Log Work Shift</span></div>
@@ -502,7 +500,7 @@
                         <label data-i18n="label_memo">Memo / Notes</label>
                         <input type="text" id="work-memo" placeholder="e.g. Farm Shift">
                     </div>
-                    <button type="submit" data-i18n="btn_save_work">Save Shift</button>
+                    <button type="submit" id="btn-save-work-text">Save</button>
                 </form>
                 <div class="history-list" id="work-history"></div>
             </div>
@@ -545,7 +543,7 @@
             </div>
         </div>
 
-        <!-- TAB RIGHT: กราฟต่างๆ -->
+        <!-- TAB RIGHT -->
         <div id="tab-right" class="tab-content">
             <div class="card">
                 <div class="card-title">
@@ -584,8 +582,8 @@
         let currentLang=localStorage.getItem('appLang')||'th';
 
         const i18n={
-            th:{title:"บันทึกงานและรายจ่าย",btn_drive:"☁️ Google Sheets",btn_pdf:"📄 เซฟ PDF",sum_net_title:"รายรับสุทธิ",sum_expense_title:"รายจ่ายรวม",rt_title:"รายละเอียดรายรับ",rt_real_hrs:"ชั่วโมงจริง:",rt_paid_hrs:"ชั่วโมงคิดเงิน:",rt_gross:"ก่อน Tax:",rt_tax:"หัก Tax (21%):",rt_super:"สะสม Super (11.5%):",fn_title:"รอบ Fortnight",fn_net_title:"สุทธิรอบนี้",fn_takehome_title:"เงินรับจริง",label_elec:"⚡ ค่าไฟ ($)",label_gas:"🔥 ค่าแก๊ส ($)",savings_title:"สัดส่วนเงินเก็บ",chart_bar_title:"ภาพรวมรายเดือน",chart_pie_title:"สัดส่วนรายจ่าย",scope_month:"เดือนนี้",scope_all:"ทั้งหมด",work_form_title:"บันทึกเวลาทำงาน",label_date:"วันที่",label_start:"เวลาเข้า",label_end:"เวลาเลิก",label_memo:"หมายเหตุ",btn_save_work:"บันทึกกะทำงาน",expense_form_title:"บันทึกรายจ่าย",label_cat:"หมวดหมู่",label_other_desc:"ระบุรายละเอียด",label_amount:"จำนวนเงิน ($)",btn_save_expense:"บันทึกรายจ่าย",delete:"ลบ",tab_left:"📊 สรุปรายเดือน",tab_center:"📝 บันทึกรายวัน",tab_right:"📈 กราฟวิเคราะห์"},
-            en:{title:"Work & Expense",btn_drive:"☁️ Google Sheets",btn_pdf:"📄 Save PDF",sum_net_title:"Net Income",sum_expense_title:"Expenses",rt_title:"Pay Breakdown",rt_real_hrs:"Actual Hrs:",rt_paid_hrs:"Paid Hrs:",rt_gross:"Gross:",rt_tax:"Tax (21%):",rt_super:"Super (11.5%):",fn_title:"Fortnight Cycle",fn_takehome_title:"Take-Home Pay",label_elec:"⚡ Electricity ($)",label_gas:"🔥 Gas ($)",savings_title:"Savings Ratio",chart_bar_title:"Monthly Overview",chart_pie_title:"Expense Breakdown",scope_month:"This Month",scope_all:"All Time",work_form_title:"Log Work Shift",label_date:"Date",label_start:"Start Time",label_end:"End Time",label_memo:"Memo / Notes",btn_save_work:"Save Shift",expense_form_title:"Log Expense",label_cat:"Category",label_other_desc:"Specify",label_amount:"Amount ($)",btn_save_expense:"Save Expense",delete:"Delete",tab_left:"📊 Monthly",tab_center:"📝 Daily Log",tab_right:"📈 Analytics"}
+            th:{title:"บันทึกงานและรายจ่าย",btn_drive:"☁️ Google Sheets",btn_pdf:"📄 เซฟ PDF",sum_net_title:"รายรับสุทธิ",sum_expense_title:"รายจ่ายรวม",rt_title:"รายละเอียดรายรับ",rt_real_hrs:"ชั่วโมงจริง:",rt_paid_hrs:"ชั่วโมงคิดเงิน:",rt_gross:"ก่อน Tax:",rt_tax:"หัก Tax (21%):",rt_super:"สะสม Super (11.5%):",fn_title:"รอบ Fortnight",fn_net_title:"สุทธิรอบนี้",fn_takehome_title:"เงินรับจริง",label_elec:"⚡ ค่าไฟ ($)",label_gas:"🔥 ค่าแก๊ส ($)",savings_title:"สัดส่วนเงินเก็บ",chart_bar_title:"ภาพรวมรายเดือน",chart_pie_title:"สัดส่วนรายจ่าย",scope_month:"เดือนนี้",scope_all:"ทั้งหมด",work_form_title:"บันทึกเวลาทำงาน",label_date:"วันที่",label_start:"เวลาเข้า",label_end:"เวลาเลิก",label_memo:"หมายเหตุ",btn_save_work:"Save",expense_form_title:"บันทึกรายจ่าย",label_cat:"หมวดหมู่",label_other_desc:"ระบุรายละเอียด",label_amount:"จำนวนเงิน ($)",btn_save_expense:"บันทึกรายจ่าย",delete:"ลบ",tab_left:"📊 สรุปรายเดือน",tab_center:"📝 บันทึกรายวัน",tab_right:"📈 กราฟวิเคราะห์"},
+            en:{title:"Work & Expense",btn_drive:"☁️ Google Sheets",btn_pdf:"📄 Save PDF",sum_net_title:"Net Income",sum_expense_title:"Expenses",rt_title:"Pay Breakdown",rt_real_hrs:"Actual Hrs:",rt_paid_hrs:"Paid Hrs:",rt_gross:"Gross:",rt_tax:"Tax (21%):",rt_super:"Super (11.5%):",fn_title:"Fortnight Cycle",fn_takehome_title:"Take-Home Pay",label_elec:"⚡ Electricity ($)",label_gas:"🔥 Gas ($)",savings_title:"Savings Ratio",chart_bar_title:"Monthly Overview",chart_pie_title:"Expense Breakdown",scope_month:"This Month",scope_all:"All Time",work_form_title:"Log Work Shift",label_date:"Date",label_start:"Start Time",label_end:"End Time",label_memo:"Memo / Notes",btn_save_work:"Save",expense_form_title:"Log Expense",label_cat:"Category",label_other_desc:"Specify",label_amount:"Amount ($)",btn_save_expense:"Save Expense",delete:"Delete",tab_left:"📊 Monthly",tab_center:"📝 Daily Log",tab_right:"📈 Analytics"}
         };
 
         function switchTab(tabName){
@@ -607,6 +605,7 @@
             document.getElementById('btn-tab-left').innerText=i18n[currentLang].tab_left;
             document.getElementById('btn-tab-center').innerText=i18n[currentLang].tab_center;
             document.getElementById('btn-tab-right').innerText=i18n[currentLang].tab_right;
+            document.getElementById('btn-save-work-text').innerText=i18n[currentLang].btn_save_work;
 
             document.querySelectorAll('[data-i18n]').forEach(el=>{
                 const k=el.getAttribute('data-i18n');
@@ -636,18 +635,28 @@
 
         document.getElementById('work-form').addEventListener('submit',function(e){
             e.preventDefault();
+            const dateVal=document.getElementById('work-date').value;
+            const startVal=document.getElementById('work-start').value;
+            const endVal=document.getElementById('work-end').value;
+            const memoVal=document.getElementById('work-memo').value;
+
+            const payRes = calculatePay(startVal, endVal, dateVal);
+
             const shift={
                 id:Date.now(),
-                date:document.getElementById('work-date').value,
-                start:document.getElementById('work-start').value,
-                end:document.getElementById('work-end').value,
-                memo:document.getElementById('work-memo').value
+                date:dateVal,
+                start:startVal,
+                end:endVal,
+                gross:payRes.gross.toFixed(2),
+                memo:memoVal
             };
             workShifts.push(shift);
             localStorage.setItem('workShifts',JSON.stringify(workShifts));
             this.reset();
             document.getElementById('work-date').value=new Date().toISOString().split('T')[0];
             updateUI();
+            
+            // ยิงข้อมูลเข้า Google Sheets แบบ 6 คอลัมน์
             syncDataToSheet('work', shift);
         });
 
@@ -696,7 +705,7 @@
                 <div class="history-item">
                     <div class="history-item-info">
                         <strong>📅 ${s.date} | ⏱️ ${s.start} - ${s.end}</strong>
-                        <span>📝 ${s.memo||'กะทำงาน'}</span>
+                        <span>Work | 📝 ${s.memo||'-'}</span>
                     </div>
                     <button class="delete-btn" onclick="deleteWork(${s.id})">${i18n[currentLang].delete}</button>
                 </div>
@@ -894,7 +903,18 @@
         function syncDataToSheet(type, data){
             const badge=document.getElementById('sync-status');
             badge.innerText="🔄 Syncing...";
-            fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({type, data})})
+            fetch(SCRIPT_URL,{
+                method:'POST',
+                mode:'no-cors',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({
+                    date: data.date,
+                    start: data.start,
+                    end: data.end,
+                    gross: data.gross,
+                    memo: data.memo
+                })
+            })
             .then(()=>{badge.innerText="✅ Synced"; setTimeout(()=>badge.innerText="☁️ Cloud Sync",3000);})
             .catch(()=>{badge.innerText="⚠️ Offline";});
         }
